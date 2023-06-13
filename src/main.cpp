@@ -23,10 +23,19 @@ using namespace clock0;
 int main()
 {
     // Take a reference to the ncurses singleton.
-    auto &nc = clock0::ncurses::ref();
+    auto &nc = ncurses::ref();
 
     // Initialize `stdscr`
-    nc.initscr();
+    auto *root = nc.initscr();
+
+    // Initialize various things about `stdscr`
+    nc.cbreak();
+    nc.noecho();
+    nc.keypad(root, true);
+    nc.raw();
+
+    // Refresh `stdscr`
+    nc.refresh();
 
     // End `stdscr`
     return nc.endwin();

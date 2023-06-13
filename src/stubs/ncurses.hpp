@@ -28,6 +28,11 @@ struct WINDOW {
 };
 
 WINDOW *initscr(void);
+int cbreak(void);
+int noecho(void);
+int keypad(WINDOW *, bool);
+int raw(void);
+int refresh(void);
 int endwin(void);
 
 #endif /* SRC_STUBS_NCURSES_HPP */

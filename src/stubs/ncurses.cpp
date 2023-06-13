@@ -25,6 +25,31 @@ WINDOW *initscr(void)
     return &root;
 }
 
+int cbreak(void)
+{
+    return OK;
+}
+
+int noecho(void)
+{
+    return OK;
+}
+
+int keypad(WINDOW *, bool)
+{
+    return OK;
+}
+
+int raw(void)
+{
+    return OK;
+}
+
+int refresh(void)
+{
+    return OK;
+}
+
 int endwin(void)
 {
     return OK;

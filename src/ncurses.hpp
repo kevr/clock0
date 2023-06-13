@@ -39,6 +39,11 @@ public:
 
 public:
     virtual WINDOW *initscr(void);
+    virtual int cbreak(void);
+    virtual int noecho(void);
+    virtual int keypad(WINDOW *, bool);
+    virtual int raw(void);
+    virtual int refresh(void);
     virtual int endwin(void);
 };
 

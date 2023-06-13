@@ -25,6 +25,31 @@ WINDOW *ncurses::initscr(void)
     return ::initscr();
 }
 
+int ncurses::cbreak(void)
+{
+    return ::cbreak();
+}
+
+int ncurses::noecho(void)
+{
+    return ::noecho();
+}
+
+int ncurses::keypad(WINDOW *win, bool bf)
+{
+    return ::keypad(win, bf);
+}
+
+int ncurses::raw(void)
+{
+    return ::raw();
+}
+
+int ncurses::refresh(void)
+{
+    return ::refresh();
+}
+
 int ncurses::endwin(void)
 {
     return ::endwin();
