@@ -1,1 +1,6 @@
+# Ignore common files and directories
 .cache/
+
+# Ignore meson wrapdb downloads
+subprojects/googletest-*/
+subprojects/packagecache/
