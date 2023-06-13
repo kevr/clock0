@@ -1,6 +1,7 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Standard header to be included to gain access to ncurses.
+ * This header switches between the real ncurses and our
+ * stub located in stubs/ncurses.{h,c}pp.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,17 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "ncurses.hpp"
-using namespace clock0;
+#ifndef SRC_NCURSES_HPP
+#define SRC_NCURSES_HPP
 
-int main()
+#ifndef BUILD_TESTS
+#include <ncurses.h>
+#else
+#include "stubs/ncurses.hpp"
+#endif
+
+#include "singleton.hpp"
+
+namespace clock0
 {
-    // Take a reference to the ncurses singleton.
-    auto &nc = clock0::ncurses::ref();
 
-    // Initialize `stdscr`
-    nc.initscr();
+class ncurses : public singleton<ncurses>
+{
+public:
+    virtual ~ncurses(void) = default;
 
-    // End `stdscr`
-    return nc.endwin();
-}
+public:
+    virtual WINDOW *initscr(void);
+    virtual int endwin(void);
+};
+
+}; // namespace clock0
+
+#endif /* SRC_NCURSES_HPP */

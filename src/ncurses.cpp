@@ -1,6 +1,6 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Base implementation of ncurses usage. The class defined in This
+ * file should be derived for mocked implementations.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -20,14 +20,12 @@
 #include "ncurses.hpp"
 using namespace clock0;
 
-int main()
+WINDOW *ncurses::initscr(void)
 {
-    // Take a reference to the ncurses singleton.
-    auto &nc = clock0::ncurses::ref();
+    return ::initscr();
+}
 
-    // Initialize `stdscr`
-    nc.initscr();
-
-    // End `stdscr`
-    return nc.endwin();
+int ncurses::endwin(void)
+{
+    return ::endwin();
 }

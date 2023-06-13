@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Stubbed function definitions for the ncurses library.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -18,16 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ncurses.hpp"
-using namespace clock0;
 
-int main()
+static WINDOW root;
+
+WINDOW *initscr(void)
 {
-    // Take a reference to the ncurses singleton.
-    auto &nc = clock0::ncurses::ref();
+    return &root;
+}
 
-    // Initialize `stdscr`
-    nc.initscr();
-
-    // End `stdscr`
-    return nc.endwin();
+int endwin(void)
+{
+    return OK;
 }
