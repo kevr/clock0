@@ -2,6 +2,10 @@
 
 A command-line task manager that interfaces with web-based VCS
 
+![lint](https://github.com/kevr/clock0/actions/workflows/lint.yaml/badge.svg?branch=master)
+![build](https://github.com/kevr/clock0/actions/workflows/build.yaml/badge.svg?branch=master)
+![tests](https://github.com/kevr/clock0/actions/workflows/tests.yaml/badge.svg?branch=master)
+
 ## Building
 
 Dependencies: C++17 compiler, [ncursesw](https://github.com/mirror/ncurses)
