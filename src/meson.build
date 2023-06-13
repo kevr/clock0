@@ -24,7 +24,7 @@ endif
 
 if get_option('exec')
   # In-house static library for executables
-  libclock0 = static_library('clock0', 'ncurses.cpp') 
+  libclock0 = static_library('clock0', sources)
   clock0 = declare_dependency(link_with : libclock0)
 
   # C++ dependencies for executable compilations
