@@ -1,6 +1,6 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Declaration of the application's overarching TUI (text user interface)
+ * container.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,18 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "ncurses.hpp"
-#include "tui/tui.hpp"
-using namespace clock0;
+#ifndef SRC_TUI_TUI_HPP
+#define SRC_TUI_TUI_HPP
 
-int main()
+#include "../ncurses.hpp"
+
+namespace clock0
 {
-    // Initialize the root window
-    tui::init();
 
-    // Refresh `stdscr`
-    tui::refresh();
+/**
+ * A text user interface class which serves two purposes:
+ * - static: Manage `stdscr`
+ * - members: Container for child windows
+ */
+class tui
+{
+private:
+    static WINDOW *root;
 
-    // End `stdscr`
-    return tui::end();
-}
+public:
+    static WINDOW *root_window(void);
+    static WINDOW *init(void);
+    static int refresh(void);
+    static int end(void);
+};
+
+}; // namespace clock0
+
+#endif /* SRC_TUI_TUI_HPP */

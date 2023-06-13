@@ -1,5 +1,6 @@
 sources = [
   'ncurses.cpp',
+  'tui/tui.cpp',
 ]
 
 if get_option('tests')

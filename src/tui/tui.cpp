@@ -1,6 +1,6 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Definition of the application's overarching TUI (text user interface)
+ * container.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,18 +17,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "ncurses.hpp"
-#include "tui/tui.hpp"
+#include "tui.hpp"
 using namespace clock0;
 
-int main()
+WINDOW *tui::root = nullptr;
+
+WINDOW *tui::root_window(void)
 {
-    // Initialize the root window
-    tui::init();
+    return root;
+}
 
-    // Refresh `stdscr`
-    tui::refresh();
+WINDOW *tui::init(void)
+{
+    auto &nc = ncurses::ref();
+    root = nc.initscr();
 
-    // End `stdscr`
-    return tui::end();
+    nc.cbreak();
+    nc.noecho();
+    nc.keypad(root, true);
+    nc.raw();
+
+    return root_window();
+}
+
+int tui::refresh(void)
+{
+    return ncurses::ref().refresh();
+}
+
+int tui::end(void)
+{
+    auto rc = ncurses::ref().endwin();
+    root = nullptr;
+    return rc;
 }
