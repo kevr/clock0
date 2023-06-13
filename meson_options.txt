@@ -1,0 +1,2 @@
+option('exec', type : 'boolean', value : true)
+option('tests', type : 'boolean', value : true)

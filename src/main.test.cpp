@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Main entrypoint unit tests for the clock0 executable.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,8 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#define main _main
+#include "main.cpp"
+#undef main
 
-int main()
+#include <gtest/gtest.h>
+
+TEST(main, runs)
 {
-    return 0;
+    EXPECT_EQ(_main(), 0);
 }
