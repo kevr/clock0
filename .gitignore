@@ -1,5 +1,6 @@
 # Ignore common files and directories
 .cache/
+compile_commands.json
 
 # Ignore meson wrapdb downloads
 subprojects/googletest-*/
