@@ -26,6 +26,7 @@ sources = [
   'logging.cpp',
   'string.cpp',
   'filesystem.cpp',
+  'options.cpp',
 ]
 
 # Shared third-party dependencies

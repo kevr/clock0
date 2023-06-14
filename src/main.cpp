@@ -18,13 +18,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "config.hpp"
+#include "enums.hpp"
+#include "logging.hpp"
+#include "options.hpp"
 #include "tui/tui.hpp"
+#include <boost/program_options/errors.hpp>
 #include <iostream>
 #include <string>
 using namespace clock0;
 
-int main()
+void add_program_options(options &opt)
 {
+    opt.add("verbose,v", "enable verbose logging");
+    opt.add("log,l",
+            boost::program_options::value<std::string>()->composing(),
+            "path to logfile");
+}
+
+int main(int argc, char *argv[])
+{
+    options opt;
+    add_program_options(opt);
+
+    auto parse_cmdline = [&opt, argc, &argv] {
+        opt.parse_args(argc, argv);
+    };
+    if (!parse_args(parse_cmdline)) {
+        return OPT_CMDLINE_ERROR;
+    }
+
+    if (opt.exists("help")) {
+        std::cout << opt << std::endl;
+        return SUCCESS;
+    }
+
+    if (opt.exists("config")) {
+        auto conf_path = opt.get<std::string>("config");
+
+        auto parse_config = [&opt, &conf_path] {
+            opt.parse_args(conf_path);
+        };
+        if (!parse_args(parse_config)) {
+            return OPT_CONFIG_ERROR;
+        }
+    }
+
     // Initialize the root window
     tui::init();
 

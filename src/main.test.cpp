@@ -20,9 +20,82 @@
 #include "main.cpp"
 #undef main
 
+#include "filesystem.hpp"
 #include "gtest/gtest.h"
+using namespace clock0;
+
+class main_test : public testing::Test
+{
+protected:
+    std::filesystem::path tmpdir;
+
+public:
+    void SetUp(void) override
+    {
+        tmpdir = clock0::filesystem::make_tmpdir();
+    }
+
+    void TearDown(void) override
+    {
+        std::filesystem::remove_all(tmpdir);
+    }
+};
+
+#define MAKE_SIMPLE_ARGS()                                                    \
+    int argc = 1;                                                             \
+    const char *c_argv[] = { "clock0" };                                      \
+    char **argv = const_cast<char **>(c_argv);
+
+#define MAKE_ARGS(n, ...)                                                     \
+    int argc = n + 1;                                                         \
+    const char *c_argv[] = { "clock0", __VA_ARGS__ };                         \
+    char **argv = const_cast<char **>(c_argv);
 
 TEST(main, runs)
 {
-    EXPECT_EQ(_main(), 0);
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
+}
+
+TEST(main, invalid_option)
+{
+    MAKE_ARGS(1, "--fakeoption");
+    EXPECT_EQ(_main(argc, argv), OPT_CMDLINE_ERROR);
+}
+
+TEST(main, help)
+{
+    MAKE_ARGS(1, "--help");
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
+}
+
+TEST_F(main_test, missing_config)
+{
+    const char *conf_path = "/does-not-exist/clock0.conf";
+    MAKE_ARGS(2, "--config", conf_path);
+    EXPECT_EQ(_main(argc, argv), OPT_CONFIG_ERROR);
+}
+
+TEST_F(main_test, config)
+{
+    auto conf_path = tmpdir / "clock0.conf";
+
+    std::ofstream ofs(conf_path.c_str(), std::ios::out);
+    ofs << "verbose = 1\n";
+    ofs.close();
+
+    MAKE_ARGS(2, "--config", conf_path.c_str());
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
+}
+
+TEST_F(main_test, config_error)
+{
+    auto conf_path = tmpdir / "clock0.conf";
+
+    std::ofstream ofs(conf_path.c_str(), std::ios::out);
+    ofs << "verbose = 1\n";
+    ofs.close();
+
+    MAKE_ARGS(2, "--config", conf_path.c_str());
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
 }
