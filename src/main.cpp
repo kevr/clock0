@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include "app.hpp"
 #include "config.hpp"
 #include "enums.hpp"
 #include "logging.hpp"
@@ -27,61 +28,8 @@
 #include <string>
 using namespace clock0;
 
-void add_program_options(options &opt)
-{
-    opt.add("verbose,v", "enable verbose logging");
-    opt.add("log,l",
-            boost::program_options::value<std::string>()->composing(),
-            "path to logfile");
-}
-
 int main(int argc, char *argv[])
 {
-    options opt;
-    add_program_options(opt);
-
-    auto parse_cmdline = [&opt, argc, &argv] {
-        opt.parse_args(argc, argv);
-    };
-    if (!parse_args(parse_cmdline)) {
-        return OPT_CMDLINE_ERROR;
-    }
-
-    if (opt.exists("help")) {
-        std::cout << opt << std::endl;
-        return SUCCESS;
-    }
-
-    if (opt.exists("config")) {
-        auto conf_path = opt.get<std::string>("config");
-
-        auto parse_config = [&opt, &conf_path] {
-            opt.parse_args(conf_path);
-        };
-        if (!parse_args(parse_config)) {
-            return OPT_CONFIG_ERROR;
-        }
-    }
-
-    if (opt.exists("log")) {
-        auto log_path = opt.get<std::string>("log");
-        logger::set_global_logfile(log_path);
-    }
-
-    if (opt.exists("verbose")) {
-        logger::set_global_debug(true);
-    }
-
-    logger log;
-    log.info("started");
-    log.debug("verbose logging enabled");
-
-    // Initialize the root window
-    tui::init();
-
-    // Refresh `stdscr`
-    tui::refresh();
-
-    // End `stdscr`
-    return tui::end();
+    application app(argc, argv);
+    return app.run();
 }

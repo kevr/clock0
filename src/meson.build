@@ -21,6 +21,7 @@ configure_file(
   configuration : conf)
 
 sources = [
+  'app.cpp',
   'ncurses.cpp',
   'tui/tui.cpp',
   'logging.cpp',
