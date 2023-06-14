@@ -21,6 +21,7 @@
 
 #include "logging.hpp"
 #include "options.hpp"
+#include "tui/tui.hpp"
 
 namespace clock0
 {
@@ -37,6 +38,9 @@ private:
 
     // Root application logger
     logger log;
+
+    // Application TUI
+    clock0::tui tui;
 
 public:
     /**

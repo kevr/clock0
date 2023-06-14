@@ -33,6 +33,7 @@ int noecho(void);
 int keypad(WINDOW *, bool);
 int raw(void);
 int refresh(void);
+int getch(void);
 int endwin(void);
 
 #endif /* SRC_STUBS_NCURSES_HPP */

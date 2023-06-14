@@ -1,5 +1,5 @@
 /*
- * Base implementation of ncurses usage. The class defined in This
+ * Test base implementation of ncurses usage. The class defined in This
  * file should be derived for mocked implementations.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
@@ -18,44 +18,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ncurses.hpp"
+#include "gtest/gtest.h"
 using namespace clock0;
 
-WINDOW *ncurses::initscr(void)
+TEST(ncurses, getchar)
 {
-    return ::initscr();
-}
-
-int ncurses::cbreak(void)
-{
-    return ::cbreak();
-}
-
-int ncurses::noecho(void)
-{
-    return ::noecho();
-}
-
-int ncurses::keypad(WINDOW *win, bool bf)
-{
-    return ::keypad(win, bf);
-}
-
-int ncurses::raw(void)
-{
-    return ::raw();
-}
-
-int ncurses::refresh(void)
-{
-    return ::refresh();
-}
-
-int ncurses::getchar(void)
-{
-    return getch();
-}
-
-int ncurses::endwin(void)
-{
-    return ::endwin();
+    EXPECT_EQ(ncurses::ref().getchar(), 0);
 }

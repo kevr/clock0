@@ -40,6 +40,8 @@ public:
     static WINDOW *init(void);
     static int refresh(void);
     static int end(void);
+
+    void loop(void);
 };
 
 }; // namespace clock0

@@ -50,6 +50,11 @@ int refresh(void)
     return OK;
 }
 
+int getch(void)
+{
+    return 0;
+}
+
 int endwin(void)
 {
     return OK;

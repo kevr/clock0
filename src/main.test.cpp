@@ -21,21 +21,26 @@
 #undef main
 
 #include "filesystem.hpp"
+#include "mocks/ncurses.hpp"
 #include "string.hpp"
 #include "gtest/gtest.h"
 using namespace clock0;
 
+using testing::Return;
 using testing::internal::CaptureStdout;
 using testing::internal::GetCapturedStdout;
 
 class main_test : public testing::Test
 {
 protected:
+    ncurses_mock nc;
     std::filesystem::path tmpdir;
 
 public:
     void SetUp(void) override
     {
+        ncurses::swap(nc);
+
         tmpdir = clock0::filesystem::make_tmpdir();
         auto fakedir = tmpdir / ".home";
         setenv("XDG_CONFIG_HOME", fakedir.c_str(), 0);
@@ -46,8 +51,18 @@ public:
         std::filesystem::remove_all(tmpdir);
         logger::set_global_logfile("");
         logger::set_global_debug(false);
+
         options::ref().clear();
+
         unsetenv("XDG_CONFIG_HOME");
+
+        ncurses::reset();
+    }
+
+protected:
+    void mock_getchar()
+    {
+        EXPECT_CALL(nc, getchar()).WillOnce(Return('0')).WillOnce(Return('q'));
     }
 };
 
@@ -63,6 +78,7 @@ public:
 
 TEST_F(main_test, runs)
 {
+    mock_getchar();
     MAKE_SIMPLE_ARGS();
     EXPECT_EQ(_main(argc, argv), SUCCESS);
 }
@@ -81,6 +97,7 @@ TEST_F(main_test, help)
 
 TEST_F(main_test, missing_config)
 {
+    mock_getchar();
     const char *conf_path = "/does-not-exist/clock0.conf";
     MAKE_ARGS(2, "--config", conf_path);
     EXPECT_EQ(_main(argc, argv), 0);
@@ -88,6 +105,7 @@ TEST_F(main_test, missing_config)
 
 TEST_F(main_test, config)
 {
+    mock_getchar();
     auto conf_path = tmpdir / "clock0.conf";
 
     std::ofstream ofs(conf_path.c_str(), std::ios::out);
@@ -112,6 +130,7 @@ TEST_F(main_test, config_error)
 
 TEST_F(main_test, log)
 {
+    mock_getchar();
     auto log_path = tmpdir / "clock0.log";
 
     MAKE_ARGS(2, "--log", log_path.c_str());
@@ -126,6 +145,7 @@ TEST_F(main_test, log)
 
 TEST_F(main_test, verbose)
 {
+    mock_getchar();
     CaptureStdout();
 
     MAKE_ARGS(1, "--verbose");

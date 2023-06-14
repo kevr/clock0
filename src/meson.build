@@ -66,6 +66,11 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('options.test', options_test)
+
+  ncurses_test = executable('ncurses.test', 'ncurses.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('ncurses.test', ncurses_test)
 endif
 
 if get_option('exec')

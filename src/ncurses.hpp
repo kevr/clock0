@@ -44,6 +44,7 @@ public:
     virtual int keypad(WINDOW *, bool);
     virtual int raw(void);
     virtual int refresh(void);
+    virtual int getchar(void);
     virtual int endwin(void);
 };
 

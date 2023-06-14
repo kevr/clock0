@@ -18,6 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "tui.hpp"
+#include <thread>
 using namespace clock0;
 
 WINDOW *tui::root = nullptr;
@@ -50,4 +51,12 @@ int tui::end(void)
     auto rc = ncurses::ref().endwin();
     root = nullptr;
     return rc;
+}
+
+void tui::loop(void)
+{
+    auto &nc = ncurses::ref();
+    for (int ch = nc.getchar(); ch != 'q'; ch = nc.getchar()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }

@@ -49,6 +49,9 @@ int application::run(void)
     // Refresh `stdscr`
     tui::refresh();
 
+    // Run TUI loop
+    tui.loop();
+
     // End `stdscr`
     return tui::end();
 }

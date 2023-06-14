@@ -1,6 +1,5 @@
 /*
- * Base implementation of ncurses usage. The class defined in This
- * file should be derived for mocked implementations.
+ * Mocked implementation of ncurses.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,45 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "ncurses.hpp"
-using namespace clock0;
+#include "../ncurses.hpp"
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
-WINDOW *ncurses::initscr(void)
+namespace clock0
 {
-    return ::initscr();
-}
 
-int ncurses::cbreak(void)
+class ncurses_mock : public ncurses
 {
-    return ::cbreak();
-}
+public:
+    virtual ~ncurses_mock(void) = default;
+    MOCK_METHOD(int, getchar, (), (override));
+};
 
-int ncurses::noecho(void)
-{
-    return ::noecho();
-}
-
-int ncurses::keypad(WINDOW *win, bool bf)
-{
-    return ::keypad(win, bf);
-}
-
-int ncurses::raw(void)
-{
-    return ::raw();
-}
-
-int ncurses::refresh(void)
-{
-    return ::refresh();
-}
-
-int ncurses::getchar(void)
-{
-    return getch();
-}
-
-int ncurses::endwin(void)
-{
-    return ::endwin();
-}
+}; // namespace clock0
