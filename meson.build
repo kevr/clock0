@@ -6,16 +6,21 @@ project('clock0', 'cpp',
   ])
 
 if get_option('exec')
-  # Production dependencies
+  # https://github.com/mirror/ncurses
   curses = dependency('ncursesw', required : true)
 endif
 
 if get_option('tests')
-  # Test dependencies
+  # https://github.com/google/googletest
   gtest_proj = subproject('gtest')
   gtest = gtest_proj.get_variable('gtest_dep')
   gtest_main = gtest_proj.get_variable('gtest_main_dep')
   gmock = gtest_proj.get_variable('gmock_dep')
 endif
+
+# https://github.com/fmtlib/fmt
+fmt_proj = subproject('fmt',
+  default_options : ['default_library=static'])
+fmt = fmt_proj.get_variable('fmt_dep')
 
 subdir('src')

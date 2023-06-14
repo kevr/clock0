@@ -1,5 +1,5 @@
 /*
- * Main entrypoint unit tests for the clock0 executable.
+ * Logging tools.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,13 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#define main _main
-#include "main.cpp"
-#undef main
+#include "logging.hpp"
+using namespace clock0;
 
-#include "gtest/gtest.h"
+bool logger::debug_enabled = false;
 
-TEST(main, runs)
+void logger::set_global_debug(bool enabled)
 {
-    EXPECT_EQ(_main(), 0);
+    debug_enabled = enabled;
+}
+
+void logger::set_debug(bool enabled)
+{
+    m_debug = enabled;
 }

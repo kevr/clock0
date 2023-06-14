@@ -18,6 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "config.hpp"
+#include "logging.hpp"
 #include "tui/tui.hpp"
 #include <iostream>
 #include <string>

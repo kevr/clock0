@@ -1,5 +1,5 @@
 /*
- * Main entrypoint unit tests for the clock0 executable.
+ * String utilities.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,13 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#define main _main
-#include "main.cpp"
-#undef main
+#include "string.hpp"
+using namespace clock0;
 
-#include "gtest/gtest.h"
-
-TEST(main, runs)
+bool clock0::search(const std::string &target, const char *regex_string)
 {
-    EXPECT_EQ(_main(), 0);
+    std::regex re(regex_string);
+    return std::regex_search(target, re);
 }
