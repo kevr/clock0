@@ -37,6 +37,8 @@ public:
     void SetUp(void) override
     {
         tmpdir = clock0::filesystem::make_tmpdir();
+        auto fakedir = tmpdir / ".home";
+        setenv("XDG_CONFIG_HOME", fakedir.c_str(), 0);
     }
 
     void TearDown(void) override
@@ -45,6 +47,7 @@ public:
         logger::set_global_logfile("");
         logger::set_global_debug(false);
         options::ref().clear();
+        unsetenv("XDG_CONFIG_HOME");
     }
 };
 
