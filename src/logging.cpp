@@ -17,13 +17,56 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "logging.hpp"
+#include <filesystem>
+#include <stdexcept>
 using namespace clock0;
 
+std::filesystem::path logger::logfile;
 bool logger::debug_enabled = false;
+
+void logger::set_global_logfile(const std::filesystem::path &path)
+{
+    logfile = path;
+}
 
 void logger::set_global_debug(bool enabled)
 {
     debug_enabled = enabled;
+}
+
+void logger::init(void)
+{
+    std::cout.rdbuf()->pubsetbuf(0, 0);
+    std::cerr.rdbuf()->pubsetbuf(0, 0);
+}
+
+logger::logger(void)
+{
+    if (!logfile.empty()) {
+        set_logfile(logfile);
+    }
+}
+
+void logger::reset_streams(void)
+{
+    logstream.close();
+
+    cout = &std::cout;
+    cerr = &std::cerr;
+}
+
+void logger::set_logfile(const std::filesystem::path &path)
+{
+    logstream.close();
+    logstream.rdbuf()->pubsetbuf(0, 0);
+    logstream.open(path, std::ios::out | std::ios::app);
+
+    if (!logstream) {
+        throw std::runtime_error("unable to write to " + path.string());
+    }
+
+    cout = &logstream;
+    cerr = &logstream;
 }
 
 void logger::set_debug(bool enabled)

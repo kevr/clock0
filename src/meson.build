@@ -11,6 +11,7 @@ sources = [
   'tui/tui.cpp',
   'logging.cpp',
   'string.cpp',
+  'filesystem.cpp',
 ]
 
 if get_option('tests')

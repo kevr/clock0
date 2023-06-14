@@ -22,6 +22,8 @@
 #include "fmt/format.h"
 #include <chrono>
 #include <ctime>
+#include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -32,32 +34,57 @@ namespace clock0
 class logger
 {
 private:
+    static std::filesystem::path logfile; // Path to log file
     static bool debug_enabled;
+
+private:
+    std::ostream *cout = &std::cout; // Stdout stream
+    std::ostream *cerr = &std::cerr; // Stderr stream
+
+    std::ofstream logstream; // Optional log stream
+
     bool m_debug = debug_enabled;
 
 public:
+    //! Set a global logfile; new loggers will open a stream to it
+    static void set_global_logfile(const std::filesystem::path &);
+
+    //! Set a global debug flag; new loggers will match their debug flag
+    static void set_global_debug(bool);
+
+    static void init(void);
+
+public:
+    //! Construct a new logger
+    logger(void);
+
+    //! Reset stdout/stderr streams
+    void reset_streams(void);
+
+    //! Set the logger-specific stream to a log file
+    void set_logfile(const std::filesystem::path &);
+
+    //! Set the logger-specific debug flag
+    void set_debug(bool);
+
     template <typename... Args>
     void info(const char *fmt, Args &&...args)
     {
-        print(std::cout, "INFO", fmt, std::forward<Args>(args)...);
+        print(*cout, "INFO", fmt, std::forward<Args>(args)...);
     }
-
-    static void set_global_debug(bool);
-
-    void set_debug(bool);
 
     template <typename... Args>
     void debug(const char *fmt, Args &&...args)
     {
         if (m_debug) {
-            print(std::cout, "DBG ", fmt, std::forward<Args>(args)...);
+            print(*cout, "DBG ", fmt, std::forward<Args>(args)...);
         }
     }
 
     template <typename... Args>
     void error(const char *fmt, Args &&...args)
     {
-        print(std::cerr, "ERR ", fmt, std::forward<Args>(args)...);
+        print(*cerr, "ERR ", fmt, std::forward<Args>(args)...);
     }
 
 private:

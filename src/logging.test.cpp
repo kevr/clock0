@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "logging.hpp"
+#include "filesystem.hpp"
 #include "string.hpp"
 #include "gtest/gtest.h"
 using namespace clock0;
@@ -30,6 +31,23 @@ class logger_test : public testing::Test
 {
 protected:
     logger log;
+    std::filesystem::path tmpdir;
+
+public:
+    static void SetUpTestSuite(void)
+    {
+        logger::init();
+    }
+
+    void SetUp(void) override
+    {
+        tmpdir = filesystem::make_tmpdir();
+    }
+
+    void TearDown(void) override
+    {
+        std::filesystem::remove_all(tmpdir);
+    }
 };
 
 TEST_F(logger_test, info)
@@ -95,4 +113,54 @@ TEST_F(logger_test, error)
     bool found =
         search(GetCapturedStderr(), R"(.{10} .{8} .+ \[ERR \] test format)");
     EXPECT_TRUE(found);
+}
+
+TEST_F(logger_test, logfile)
+{
+    std::filesystem::path path(tmpdir / "test.log");
+    log.set_logfile(path);
+    log.info("test");
+
+    std::ifstream ifs(path, std::ios::in);
+    std::string line;
+    std::getline(ifs, line);
+    ifs.close();
+    bool found = search(line, R"(.{10} .{8} .+ \[INFO\] test)");
+    EXPECT_TRUE(found);
+
+    log.reset_streams();
+    CaptureStdout();
+    log.info("test");
+    found = search(GetCapturedStdout(), R"(.{10} .{8} .+ \[INFO\] test)");
+    EXPECT_TRUE(found);
+}
+
+TEST_F(logger_test, global_logfile)
+{
+    // Set a global logfile
+    std::filesystem::path path(tmpdir / "test.log");
+    logger::set_global_logfile(path);
+
+    // Construct a new logger which should use the global logfile
+    logger log;
+
+    // Log out to the global logfile
+    log.info("test");
+
+    // Check the contents of the global logfile after info logging
+    std::ifstream ifs(path, std::ios::in);
+    std::string line;
+    std::getline(ifs, line);
+    ifs.close();
+    bool found = search(line, R"(.{10} .{8} .+ \[INFO\] test)");
+    EXPECT_TRUE(found);
+
+    // Unset the global logfile
+    logger::set_global_logfile("");
+}
+
+TEST_F(logger_test, logstream_fails)
+{
+    ASSERT_THROW(log.set_logfile("/does-not-exist/and/should/fail"),
+                 std::runtime_error);
 }

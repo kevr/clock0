@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Various filesystem utilities.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,20 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "config.hpp"
-#include "tui/tui.hpp"
-#include <iostream>
-#include <string>
+#include "filesystem.hpp"
+#include <fmt/format.h>
+#include <unistd.h>
 using namespace clock0;
 
-int main()
+std::filesystem::path filesystem::make_tmpdir(void)
 {
-    // Initialize the root window
-    tui::init();
-
-    // Refresh `stdscr`
-    tui::refresh();
-
-    // End `stdscr`
-    return tui::end();
+    std::string tmpl("/tmp/clock0-XXXXXX");
+    mkdtemp(tmpl.data());
+    return tmpl;
 }
