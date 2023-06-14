@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Program configuration for the clock0 program.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,20 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "config.hpp"
-#include "tui/tui.hpp"
-#include <iostream>
+#ifndef SRC_CONFIG_HPP
+#define SRC_CONFIG_HPP
+
 #include <string>
-using namespace clock0;
 
-int main()
-{
-    // Initialize the root window
-    tui::init();
+// Program details
+const std::string PROG = "@name@";
+const std::string VERSION = "@version@";
 
-    // Refresh `stdscr`
-    tui::refresh();
-
-    // End `stdscr`
-    return tui::end();
-}
+#endif /* SRC_CONFIG_HPP */

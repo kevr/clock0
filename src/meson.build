@@ -1,3 +1,11 @@
+conf = configuration_data()
+conf.set('name', 'clock0')
+conf.set('version', get_option('version'))
+configure_file(
+  input : 'config.hpp.in',
+  output : 'config.hpp',
+  configuration : conf)
+
 sources = [
   'ncurses.cpp',
   'tui/tui.cpp',
