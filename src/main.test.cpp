@@ -21,6 +21,7 @@
 #undef main
 
 #include "filesystem.hpp"
+#include "string.hpp"
 #include "gtest/gtest.h"
 using namespace clock0;
 
@@ -98,4 +99,18 @@ TEST_F(main_test, config_error)
 
     MAKE_ARGS(2, "--config", conf_path.c_str());
     EXPECT_EQ(_main(argc, argv), SUCCESS);
+}
+
+TEST_F(main_test, log)
+{
+    auto log_path = tmpdir / "clock0.log";
+
+    MAKE_ARGS(2, "--log", log_path.c_str());
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
+
+    std::ifstream ifs(log_path.c_str(), std::ios::in);
+    std::string line;
+    std::getline(ifs, line);
+    ifs.close();
+    EXPECT_TRUE(search(line, "started"));
 }

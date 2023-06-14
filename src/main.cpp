@@ -63,6 +63,14 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (opt.exists("log")) {
+        auto log_path = opt.get<std::string>("log");
+        logger::set_global_logfile(log_path);
+    }
+
+    logger log;
+    log.info("started");
+
     // Initialize the root window
     tui::init();
 
