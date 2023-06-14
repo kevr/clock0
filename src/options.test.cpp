@@ -26,3 +26,9 @@ TEST(options, xdg_config_home)
     options opt;
     unsetenv("XDG_CONFIG_HOME");
 }
+
+TEST(options, home)
+{
+    setenv("HOME", "/path/to/home", 0);
+    options opt;
+}
