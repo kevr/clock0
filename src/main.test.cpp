@@ -25,6 +25,9 @@
 #include "gtest/gtest.h"
 using namespace clock0;
 
+using testing::internal::CaptureStdout;
+using testing::internal::GetCapturedStdout;
+
 class main_test : public testing::Test
 {
 protected:
@@ -39,6 +42,8 @@ public:
     void TearDown(void) override
     {
         std::filesystem::remove_all(tmpdir);
+        logger::set_global_logfile("");
+        logger::set_global_debug(false);
     }
 };
 
@@ -52,19 +57,19 @@ public:
     const char *c_argv[] = { "clock0", __VA_ARGS__ };                         \
     char **argv = const_cast<char **>(c_argv);
 
-TEST(main, runs)
+TEST_F(main_test, runs)
 {
     MAKE_SIMPLE_ARGS();
     EXPECT_EQ(_main(argc, argv), SUCCESS);
 }
 
-TEST(main, invalid_option)
+TEST_F(main_test, invalid_option)
 {
     MAKE_ARGS(1, "--fakeoption");
     EXPECT_EQ(_main(argc, argv), OPT_CMDLINE_ERROR);
 }
 
-TEST(main, help)
+TEST_F(main_test, help)
 {
     MAKE_ARGS(1, "--help");
     EXPECT_EQ(_main(argc, argv), SUCCESS);
@@ -113,4 +118,15 @@ TEST_F(main_test, log)
     std::getline(ifs, line);
     ifs.close();
     EXPECT_TRUE(search(line, "started"));
+}
+
+TEST_F(main_test, verbose)
+{
+    CaptureStdout();
+
+    MAKE_ARGS(1, "--verbose");
+    EXPECT_EQ(_main(argc, argv), SUCCESS);
+
+    auto output = GetCapturedStdout();
+    EXPECT_TRUE(search(output, "verbose logging enabled"));
 }

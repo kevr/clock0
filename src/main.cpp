@@ -68,8 +68,13 @@ int main(int argc, char *argv[])
         logger::set_global_logfile(log_path);
     }
 
+    if (opt.exists("verbose")) {
+        logger::set_global_debug(true);
+    }
+
     logger log;
     log.info("started");
+    log.debug("verbose logging enabled");
 
     // Initialize the root window
     tui::init();
