@@ -47,6 +47,12 @@ logger::logger(void)
     }
 }
 
+logger::logger(const std::string &name)
+    : logger()
+{
+    set_name(name);
+}
+
 void logger::reset_streams(void)
 {
     logstream.close();
@@ -72,4 +78,9 @@ void logger::set_logfile(const std::filesystem::path &path)
 void logger::set_debug(bool enabled)
 {
     m_debug = enabled;
+}
+
+void logger::set_name(const std::string &name)
+{
+    m_name = name;
 }

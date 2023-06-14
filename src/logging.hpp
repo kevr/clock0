@@ -45,6 +45,8 @@ private:
 
     bool m_debug = debug_enabled;
 
+    std::string m_name;
+
 public:
     //! Set a global logfile; new loggers will open a stream to it
     static void set_global_logfile(const std::filesystem::path &);
@@ -58,6 +60,9 @@ public:
     //! Construct a new logger
     logger(void);
 
+    //! Construct a new logger with a particular name
+    logger(const std::string &);
+
     //! Reset stdout/stderr streams
     void reset_streams(void);
 
@@ -66,6 +71,9 @@ public:
 
     //! Set the logger-specific debug flag
     void set_debug(bool);
+
+    //! Set the logger's name
+    void set_name(const std::string &);
 
     template <typename... Args>
     void info(const char *fmt, Args &&...args)
@@ -100,8 +108,13 @@ private:
         // Fill a stringstream with an fmt-formatted message
         std::stringstream ss;
         ss << std::put_time(localtime, "%Y-%m-%d %H:%M:%S %Z") << " [" << label
-           << "] "
-           << fmt::vformat(fmt::string_view(format),
+           << "] ";
+
+        if (m_name.size()) {
+            ss << '<' << m_name << "> ";
+        }
+
+        ss << fmt::vformat(fmt::string_view(format),
                            fmt::make_format_args(std::forward<Args>(args)...))
            << std::endl;
 
