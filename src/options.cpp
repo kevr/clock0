@@ -142,7 +142,7 @@ std::ostream &clock0::operator<<(std::ostream &os, const options &opt)
     os << "\ncommand-line options:\n" << opt.m_cmdline;
 
     if (opt.m_config->options().size()) {
-        os << "\nconfig options:\n" << opt.m_config;
+        os << "\nconfig options:\n" << *opt.m_config;
     }
 
     return os;
