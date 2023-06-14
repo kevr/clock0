@@ -43,10 +43,6 @@ int application::run(void)
             return rc;
     }
 
-    // Print out initial log messages
-    log.info("started");
-    log.debug("verbose logging enabled");
-
     // Initialize the root window
     tui::init();
 
@@ -86,12 +82,14 @@ int application::handle_program_args(void)
 
     // Parse any provided config if it can be found
     auto conf = opt.get<std::string>("config");
+    bool config_loaded = false;
     if (std::filesystem::exists(conf)) {
         auto parse_config = [&] {
             opt.parse_args(conf);
         };
         if (!parse_args(parse_config))
             return OPT_CONFIG_ERROR;
+        config_loaded = true;
     }
 
     // Configure logger static and local logfile
@@ -105,6 +103,12 @@ int application::handle_program_args(void)
     auto verbose = opt.exists("verbose");
     logger::set_global_debug(verbose);
     log.set_debug(verbose);
+
+    // Print out initial log messages with startup details
+    log.info("started");
+    if (config_loaded)
+        log.info("configuration loaded at '{}'", conf);
+    log.debug("verbose logging enabled");
 
     return SUCCESS;
 }
