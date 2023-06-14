@@ -8,7 +8,8 @@ A command-line task manager that interfaces with web-based VCS
 
 ## Building
 
-Dependencies: C++17 compiler, [ncursesw](https://github.com/mirror/ncurses)
+Dependencies: C++17 compiler, [ncursesw](https://github.com/mirror/ncurses),
+[boost/program_options](https://github.com/boostorg/boost/tree/master/libs)
 
 This project relies on the [meson](https://mesonbuild.com/) build system to
 configure and build its executables and tests.

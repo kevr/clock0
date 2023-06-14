@@ -1,3 +1,17 @@
+#
+# Dependencies in this file are split between test and production
+# executables. Some dependencies are shared, while others are specific
+# to their executable compilation.
+#
+# `tp_deps` contains shared third-party dependencies
+#
+# If get_option('tests') is true, `tp_test_deps` is populated
+# with all third-party test dependencies (including stubs)
+#
+# If get_option('exec') is true, `tp_exe_deps` is populated
+# with all real third-party dependencies
+#
+
 conf = configuration_data()
 conf.set('name', 'clock0')
 conf.set('version', get_option('version'))
@@ -14,6 +28,9 @@ sources = [
   'filesystem.cpp',
 ]
 
+# Shared third-party dependencies
+tp_deps = [fmt, boost_po]
+
 if get_option('tests')
   subdir('stubs')
 
@@ -26,8 +43,12 @@ if get_option('tests')
     cpp_args : test_args)
   clock0_test = declare_dependency(link_with : libclock0_test)
 
-  # C++ dependencies for test compilations
-  test_deps = [fmt, stubs, clock0_test, gtest, gtest_main, gmock]
+  # Third-party (and stubbed) test dependencies
+  gtest_deps = [gtest, gtest_main, gmock]
+  tp_test_deps = [stubs] + tp_deps + gtest_deps
+
+  # All test dependencies
+  test_deps = [clock0_test] + tp_test_deps
 
   main_test = executable('main.test', 'main.test.cpp',
     dependencies : test_deps,
@@ -46,10 +67,10 @@ if get_option('exec')
     dependencies : fmt)
   clock0 = declare_dependency(link_with : libclock0)
 
-  # C++ dependencies for executable compilations
-  exe_deps = [fmt, curses, clock0]
+  # Third-party executable dependencies
+  tp_exe_deps = tp_deps + [curses]
 
   exe = executable('clock0', 'main.cpp',
-    dependencies : exe_deps,
+    dependencies : [clock0] + tp_exe_deps,
     install : true)
 endif

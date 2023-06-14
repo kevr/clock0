@@ -23,4 +23,9 @@ fmt_proj = subproject('fmt',
   default_options : ['default_library=static'])
 fmt = fmt_proj.get_variable('fmt_dep')
 
+# https://github.com/boostorg/boost
+boost_po = dependency('boost',
+  modules : ['program_options'],
+  required : true)
+
 subdir('src')
