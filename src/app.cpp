@@ -20,6 +20,7 @@
 #include "enums.hpp"
 #include "logging.hpp"
 #include "tui/tui.hpp"
+#include <cstdlib>
 using namespace clock0;
 
 application::application(int argc, char **argv)
@@ -35,9 +36,12 @@ int application::run(void)
     // Initialize logging details
     logger::init();
 
-    // Deal with program arguments via command-line and configuration
-    if (auto rc = handle_program_args())
-        return rc;
+    {
+        // Deal with program arguments via command-line and configuration
+        auto &opt = options::ref();
+        if (auto rc = handle_program_args(); rc || opt.exists("help"))
+            return rc;
+    }
 
     // Print out initial log messages
     log.info("started");
@@ -55,6 +59,8 @@ int application::run(void)
 
 void application::add_program_options(void)
 {
+    auto &opt = options::ref();
+
     opt.add("verbose,v", "enable verbose logging");
     opt.add("log,l",
             boost::program_options::value<std::string>()->composing(),
@@ -63,6 +69,8 @@ void application::add_program_options(void)
 
 int application::handle_program_args(void)
 {
+    auto &opt = options::ref();
+
     // Parse command-line arguments
     auto parse_cmdline = [&] {
         opt.parse_args(argc, argv);
@@ -72,14 +80,13 @@ int application::handle_program_args(void)
 
     // Handle --help if provided
     if (opt.exists("help")) {
-        std::cout << opt;
+        std::cout << opt << std::endl;
         return SUCCESS;
     }
 
-    // Parse any provided config
-    if (opt.exists("config")) {
-        auto conf = opt.get<std::string>("config");
-
+    // Parse any provided config if it can be found
+    auto conf = opt.get<std::string>("config");
+    if (std::filesystem::exists(conf)) {
         auto parse_config = [&] {
             opt.parse_args(conf);
         };

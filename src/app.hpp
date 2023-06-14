@@ -38,9 +38,6 @@ private:
     // Root application logger
     logger log;
 
-    // Application options parser
-    options opt;
-
 public:
     /**
      * Construct the application

@@ -23,6 +23,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <filesystem>
 #include <iostream>
+#include <memory>
 
 namespace clock0
 {
@@ -35,7 +36,7 @@ private:
 
     // Option descriptions for both the command-line and configuration
     boost::program_options::options_description m_cmdline;
-    boost::program_options::options_description m_config;
+    std::shared_ptr<boost::program_options::options_description> m_config;
 
     // Argument data
     int m_argc = 0;
@@ -43,6 +44,11 @@ private:
 
 private:
     std::ostream &usage(std::ostream &) const;
+
+public:
+    static options &ref(void);
+
+    void clear(void);
 
 public:
     //! Default constructor

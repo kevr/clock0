@@ -61,6 +61,11 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('logging.test', logging_test)
+
+  options_test = executable('options.test', 'options.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('options.test', options_test)
 endif
 
 if get_option('exec')

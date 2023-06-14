@@ -25,7 +25,7 @@ using namespace clock0;
 std::ostream &options::usage(std::ostream &os) const
 {
     boost::program_options::options_description desc;
-    desc.add(m_cmdline).add(m_config);
+    desc.add(m_cmdline).add(*m_config);
     const auto &opts = desc.options();
 
     std::vector<char> simple;
@@ -58,24 +58,47 @@ std::ostream &options::usage(std::ostream &os) const
     return os;
 }
 
-options::options(void)
+options &options::ref(void)
 {
+    static options opt;
+    return opt;
+}
+
+void options::clear(void)
+{
+    m_store.clear();
+    m_config = std::make_shared<boost::program_options::options_description>();
+}
+
+options::options(void)
+    : m_config(std::make_shared<boost::program_options::options_description>())
+{
+    std::filesystem::path conf_path;
+
+    auto *xdg_config_home = std::getenv("XDG_CONFIG_HOME");
+    if (xdg_config_home) {
+        conf_path = std::filesystem::path(xdg_config_home) / PROG / "config";
+    } else {
+        auto *home = std::getenv("HOME");
+        conf_path = std::filesystem::path(home) / ".config" / PROG / "config";
+    }
+
     m_cmdline.add_options()("help,h", "print a help summary")(
         "config,c",
-        boost::program_options::value<std::string>(),
+        boost::program_options::value<std::string>()->default_value(conf_path),
         "specify a configuration file");
 }
 
 void options::add(const char *arg, const char *help)
 {
-    m_config.add_options()(arg, help);
+    m_config->add_options()(arg, help);
 }
 
 void options::add(const char *arg,
                   const boost::program_options::value_semantic *value,
                   const char *help)
 {
-    m_config.add_options()(arg, value, help);
+    m_config->add_options()(arg, value, help);
 }
 
 void options::parse_args(int argc, char *argv[])
@@ -84,7 +107,7 @@ void options::parse_args(int argc, char *argv[])
     m_argv = const_cast<char **>(argv);
 
     boost::program_options::options_description desc;
-    desc.add(m_cmdline).add(m_config);
+    desc.add(m_cmdline).add(*m_config);
 
     // Parse the command-line with both m_cmdline and m_config options.
     boost::program_options::store(
@@ -95,7 +118,7 @@ void options::parse_args(int argc, char *argv[])
 void options::parse_args(const std::filesystem::path &path)
 {
     boost::program_options::options_description desc;
-    desc.add(m_config);
+    desc.add(*m_config);
 
     // Parse the configuration file provided.
     boost::program_options::store(
@@ -118,7 +141,7 @@ std::ostream &clock0::operator<<(std::ostream &os, const options &opt)
 
     os << "\ncommand-line options:\n" << opt.m_cmdline;
 
-    if (opt.m_config.options().size()) {
+    if (opt.m_config->options().size()) {
         os << "\nconfig options:\n" << opt.m_config;
     }
 

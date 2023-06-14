@@ -44,6 +44,7 @@ public:
         std::filesystem::remove_all(tmpdir);
         logger::set_global_logfile("");
         logger::set_global_debug(false);
+        options::ref().clear();
     }
 };
 
@@ -79,7 +80,7 @@ TEST_F(main_test, missing_config)
 {
     const char *conf_path = "/does-not-exist/clock0.conf";
     MAKE_ARGS(2, "--config", conf_path);
-    EXPECT_EQ(_main(argc, argv), OPT_CONFIG_ERROR);
+    EXPECT_EQ(_main(argc, argv), 0);
 }
 
 TEST_F(main_test, config)
@@ -99,11 +100,11 @@ TEST_F(main_test, config_error)
     auto conf_path = tmpdir / "clock0.conf";
 
     std::ofstream ofs(conf_path.c_str(), std::ios::out);
-    ofs << "verbose = 1\n";
+    ofs << "fake-option = 1\n";
     ofs.close();
 
     MAKE_ARGS(2, "--config", conf_path.c_str());
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    EXPECT_EQ(_main(argc, argv), OPT_CONFIG_ERROR);
 }
 
 TEST_F(main_test, log)
