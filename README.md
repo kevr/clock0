@@ -11,8 +11,10 @@ A command-line task manager that interfaces with web-based VCS
 Dependencies: C++17 compiler, [ncursesw](https://github.com/mirror/ncurses),
 [boost/program_options](https://github.com/boostorg/boost/tree/master/libs)
 
-This project relies on the [meson](https://mesonbuild.com/) build system to
-configure and build its executables and tests.
+This project relies on the [meson](https://mesonbuild.com/) build system as
+well as compiler tools [ninja](https://github.com/ninja-build/ninja) or
+[samurai](https://github.com/michaelforney/samurai) to configure and build its
+executables and tests.
 
 By default, the primary executable and test builds are enabled; to disable,
 they can be toggled off by setting the `exec` and `tests` meson options
@@ -36,14 +38,14 @@ while building tests:
 After running tests, coverage can be collected using the `coverage` target:
 
     ## First, run tests
-    $ ninja test
+    $ ninja -C build-tests test
 
     ## Then, collect coverage
-    $ ninja coverage
+    $ ninja -C build-tests coverage
 
 ## Installation
 
 Once build, the project can be installed to the system by issuing they
 `install` target:
 
-    build-exec$ meson install
+    $ ninja -C build-exec install --skip-subprojects
