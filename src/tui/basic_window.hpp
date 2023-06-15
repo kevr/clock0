@@ -1,6 +1,5 @@
 /*
- * Declaration of the application's overarching TUI (text user interface)
- * container.
+ * Implementation of an objective ncurses window base.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,36 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_TUI_TUI_HPP
-#define SRC_TUI_TUI_HPP
+#ifndef SRC_TUI_BASIC_WINDOW_HPP
+#define SRC_TUI_BASIC_WINDOW_HPP
 
-#include "root_window.hpp"
-#include <memory>
+#include "../ncurses.hpp"
 
 namespace clock0::tui
 {
 
-/**
- * A text user interface class which serves two purposes:
- * - static: Manage `stdscr`
- * - members: Container for child windows
- */
-class tui
+class basic_window
 {
-private:
-    std::unique_ptr<root_window> root;
+protected:
+    WINDOW *m_handle = nullptr;
 
 public:
-    //! Initialize the root window of the TUI
-    void create(void);
+    /**
+     * Handle constructor
+     *
+     * @param h External handle to stdscr
+     */
+    basic_window(WINDOW *);
 
-    //! Refresh the TUI
-    int refresh(void);
+    //! Virtual destructor for polymorphic purposes
+    virtual ~basic_window(void) = default;
 
-    //! Runs the TUI loop
-    int loop(void);
+    //! Returns a pointer to internal ncurses window handle
+    WINDOW *handle(void) const;
+
+    //! Pure virtual drawing of this window
+    virtual void draw(bool) = 0;
+
+    //! Refresh this basic_window
+    virtual int refresh(void) = 0;
 };
 
 }; // namespace clock0::tui
 
-#endif /* SRC_TUI_TUI_HPP */
+#endif /* SRC_TUI_BASIC_WINDOW_HPP */

@@ -43,17 +43,14 @@ int application::run(void)
             return rc;
     }
 
-    // Initialize the root window
-    tui::init();
+    // Initialize the TUI
+    ui.create();
 
     // Refresh `stdscr`
-    tui::refresh();
+    ui.refresh();
 
-    // Run TUI loop
-    tui.loop();
-
-    // End `stdscr`
-    return tui::end();
+    // Run the TUI loop
+    return ui.loop();
 }
 
 void application::add_program_options(void)

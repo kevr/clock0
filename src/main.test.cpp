@@ -33,6 +33,7 @@ using testing::internal::GetCapturedStdout;
 class main_test : public testing::Test
 {
 protected:
+    WINDOW root;
     ncurses_mock nc;
     std::filesystem::path tmpdir;
 
@@ -60,9 +61,20 @@ public:
     }
 
 protected:
-    void mock_getchar()
+    void mock_initscr(void)
+    {
+        EXPECT_CALL(nc, initscr()).WillRepeatedly(Return(&root));
+    }
+
+    void mock_getchar(void)
     {
         EXPECT_CALL(nc, getchar()).WillOnce(Return('0')).WillOnce(Return('q'));
+    }
+
+    void mock_tui(void)
+    {
+        mock_initscr();
+        mock_getchar();
     }
 };
 
@@ -78,7 +90,7 @@ protected:
 
 TEST_F(main_test, runs)
 {
-    mock_getchar();
+    mock_tui();
     MAKE_SIMPLE_ARGS();
     EXPECT_EQ(_main(argc, argv), SUCCESS);
 }
@@ -97,7 +109,7 @@ TEST_F(main_test, help)
 
 TEST_F(main_test, missing_config)
 {
-    mock_getchar();
+    mock_tui();
     const char *conf_path = "/does-not-exist/clock0.conf";
     MAKE_ARGS(2, "--config", conf_path);
     EXPECT_EQ(_main(argc, argv), 0);
@@ -105,7 +117,7 @@ TEST_F(main_test, missing_config)
 
 TEST_F(main_test, config)
 {
-    mock_getchar();
+    mock_tui();
     auto conf_path = tmpdir / "clock0.conf";
 
     std::ofstream ofs(conf_path.c_str(), std::ios::out);
@@ -130,7 +142,7 @@ TEST_F(main_test, config_error)
 
 TEST_F(main_test, log)
 {
-    mock_getchar();
+    mock_tui();
     auto log_path = tmpdir / "clock0.log";
 
     MAKE_ARGS(2, "--log", log_path.c_str());
@@ -145,7 +157,7 @@ TEST_F(main_test, log)
 
 TEST_F(main_test, verbose)
 {
-    mock_getchar();
+    mock_tui();
     CaptureStdout();
 
     MAKE_ARGS(1, "--verbose");

@@ -21,6 +21,11 @@
 #include "gtest/gtest.h"
 using namespace clock0;
 
+TEST(ncurses, refresh)
+{
+    EXPECT_EQ(ncurses::ref().refresh(), OK);
+}
+
 TEST(ncurses, getchar)
 {
     EXPECT_EQ(ncurses::ref().getchar(), 0);

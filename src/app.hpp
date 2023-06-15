@@ -40,7 +40,7 @@ private:
     logger log;
 
     // Application TUI
-    clock0::tui tui;
+    tui::tui ui;
 
 public:
     /**

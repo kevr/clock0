@@ -1,6 +1,5 @@
 /*
- * Definition of the application's overarching TUI (text user interface)
- * container.
+ * Implementation of an objective ncurses window base.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,29 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "tui.hpp"
-#include "../enums.hpp"
-#include <thread>
-#include <utility>
-using namespace clock0::tui;
+#include "basic_window.hpp"
+using namespace clock0;
 
-int tui::refresh(void)
+tui::basic_window::basic_window(WINDOW *h)
+    : m_handle(h)
 {
-    return root->refresh();
 }
 
-void tui::create(void)
+WINDOW *tui::basic_window::handle(void) const
 {
-    root.reset();
-    root = std::make_unique<root_window>();
-}
-
-int tui::loop(void)
-{
-    auto &nc = ncurses::ref();
-    for (int ch = nc.getchar(); ch != 'q'; ch = nc.getchar()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    return SUCCESS;
+    return m_handle;
 }

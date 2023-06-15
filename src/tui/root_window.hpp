@@ -1,6 +1,5 @@
 /*
- * Definition of the application's overarching TUI (text user interface)
- * container.
+ * Implementation of an ncurses root (stdscr) window
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,29 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "tui.hpp"
-#include "../enums.hpp"
-#include <thread>
-#include <utility>
-using namespace clock0::tui;
+#ifndef SRC_TUI_ROOT_WINDOW_HPP
+#define SRC_TUI_ROOT_WINDOW_HPP
 
-int tui::refresh(void)
+#include "basic_window.hpp"
+
+namespace clock0::tui
 {
-    return root->refresh();
-}
 
-void tui::create(void)
+class root_window : public basic_window
 {
-    root.reset();
-    root = std::make_unique<root_window>();
-}
+private:
+    static bool m_created;
 
-int tui::loop(void)
-{
-    auto &nc = ncurses::ref();
-    for (int ch = nc.getchar(); ch != 'q'; ch = nc.getchar()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+public:
+    /**
+     * Handle constructor
+     *
+     * @param h External root ncurses (stdscr) window.
+     */
+    root_window(void);
 
-    return SUCCESS;
-}
+    //! Virtual destructor
+    virtual ~root_window(void);
+
+    //! Draw the root_window
+    void draw(bool post_refresh = false) override;
+
+    //! Refresh the root_window
+    int refresh(void) override;
+};
+
+}; // namespace clock0::tui
+
+#endif /* SRC_TUI_ROOT_WINDOW_HPP */

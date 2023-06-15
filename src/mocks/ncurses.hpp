@@ -27,6 +27,8 @@ class ncurses_mock : public ncurses
 {
 public:
     virtual ~ncurses_mock(void) = default;
+    MOCK_METHOD(WINDOW *, initscr, (), (override));
+    MOCK_METHOD(int, refresh, (), (override));
     MOCK_METHOD(int, getchar, (), (override));
 };
 
