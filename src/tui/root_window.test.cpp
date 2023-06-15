@@ -59,6 +59,19 @@ TEST(root_window, only_one_root)
     EXPECT_THROW(tui::root_window(), std::runtime_error);
 }
 
+TEST(root_window, dimensions)
+{
+    tui::root_window root;
+
+    auto [size_x, size_y] = root.size();
+    EXPECT_EQ(size_x, 20);
+    EXPECT_EQ(size_y, 60);
+
+    auto [pos_x, pos_y] = root.position();
+    EXPECT_EQ(pos_x, 0);
+    EXPECT_EQ(pos_y, 0);
+}
+
 TEST_F(root_window_test, draw)
 {
     mock_initscr(&root);

@@ -55,6 +55,16 @@ int ncurses::getchar(void)
     return getch();
 }
 
+void ncurses::get_maxyx(WINDOW *win, int &y, int &x)
+{
+    getmaxyx(win, y, x);
+}
+
+void ncurses::get_begyx(WINDOW *win, int &y, int &x)
+{
+    getbegyx(win, y, x);
+}
+
 int ncurses::endwin(void)
 {
     return ::endwin();

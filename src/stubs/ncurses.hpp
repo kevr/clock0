@@ -27,6 +27,10 @@ const int ERR = -1;
 struct WINDOW {
 };
 
+// Default values for screen sizes (x = 20, y = 60)
+const int TEST_COLS = 20;
+const int TEST_LINES = 60;
+
 WINDOW *initscr(void);
 int cbreak(void);
 int noecho(void);
@@ -34,6 +38,8 @@ int keypad(WINDOW *, bool);
 int raw(void);
 int refresh(void);
 int getch(void);
+void getmaxyx(WINDOW *, int &, int &);
+void getbegyx(WINDOW *, int &, int &);
 int endwin(void);
 
 #endif /* SRC_STUBS_NCURSES_HPP */

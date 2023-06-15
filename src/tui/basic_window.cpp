@@ -17,14 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "basic_window.hpp"
-using namespace clock0;
+using namespace clock0::tui;
 
-tui::basic_window::basic_window(WINDOW *h)
+basic_window::basic_window(WINDOW *h)
     : m_handle(h)
 {
 }
 
-WINDOW *tui::basic_window::handle(void) const
+WINDOW *basic_window::handle(void) const
 {
     return m_handle;
+}
+
+std::tuple<int, int> basic_window::size(void) const
+{
+    int x, y;
+    auto &nc = ncurses::ref();
+    nc.get_maxyx(m_handle, y, x);
+    return std::make_tuple(x, y);
+}
+
+std::tuple<int, int> basic_window::position(void) const
+{
+    int x, y;
+    auto &nc = ncurses::ref();
+    nc.get_begyx(m_handle, y, x);
+    return std::make_tuple(x, y);
 }

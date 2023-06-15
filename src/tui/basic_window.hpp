@@ -20,6 +20,7 @@
 #define SRC_TUI_BASIC_WINDOW_HPP
 
 #include "../ncurses.hpp"
+#include <tuple>
 
 namespace clock0::tui
 {
@@ -48,6 +49,12 @@ public:
 
     //! Refresh this basic_window
     virtual int refresh(void) = 0;
+
+    //! Returns an (x, y) tuple of the size of this window
+    std::tuple<int, int> size(void) const;
+
+    //! Returns an (x, y) tuple of the position of this window
+    std::tuple<int, int> position(void) const;
 };
 
 }; // namespace clock0::tui

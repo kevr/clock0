@@ -55,6 +55,17 @@ int getch(void)
     return 0;
 }
 
+void getmaxyx(WINDOW *, int &y, int &x)
+{
+    x = TEST_COLS;
+    y = TEST_LINES;
+}
+
+void getbegyx(WINDOW *, int &y, int &x)
+{
+    x = y = 0;
+}
+
 int endwin(void)
 {
     return OK;

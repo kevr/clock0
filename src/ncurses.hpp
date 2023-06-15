@@ -45,6 +45,8 @@ public:
     virtual int raw(void);
     virtual int refresh(void);
     virtual int getchar(void);
+    virtual void get_maxyx(WINDOW *, int &, int &);
+    virtual void get_begyx(WINDOW *, int &, int &);
     virtual int endwin(void);
 };
 
