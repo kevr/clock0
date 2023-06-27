@@ -21,6 +21,7 @@
 #define SRC_TUI_TUI_HPP
 
 #include "root_window.hpp"
+#include "window.hpp"
 #include <memory>
 
 namespace clock0::tui
@@ -35,6 +36,7 @@ class tui
 {
 private:
     std::unique_ptr<root_window> root;
+    std::shared_ptr<window> container;
 
 public:
     //! Initialize the root window of the TUI

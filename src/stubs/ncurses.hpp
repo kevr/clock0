@@ -38,8 +38,11 @@ int keypad(WINDOW *, bool);
 int raw(void);
 int refresh(void);
 int getch(void);
+WINDOW *derwin(WINDOW *, int, int, int, int);
+int wrefresh(WINDOW *);
 void getmaxyx(WINDOW *, int &, int &);
 void getbegyx(WINDOW *, int &, int &);
+int delwin(WINDOW *);
 int endwin(void);
 
 #endif /* SRC_STUBS_NCURSES_HPP */

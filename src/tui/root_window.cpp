@@ -55,12 +55,19 @@ root_window::~root_window(void)
 
 void root_window::draw(bool post_refresh)
 {
-    if (post_refresh) {
+    // Call draw on children; the root content
+    basic_window::draw(post_refresh);
+
+    // Refresh starting from this root window if we should
+    if (post_refresh)
         refresh();
-    }
 }
 
 int root_window::refresh(void)
 {
-    return ncurses::ref().refresh();
+    // Refresh `stdscr` window
+    ncurses::ref().refresh();
+
+    // Refresh children windows
+    return basic_window::refresh();
 }

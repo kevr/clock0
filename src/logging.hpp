@@ -72,6 +72,9 @@ public:
     //! Set the logger-specific debug flag
     void set_debug(bool);
 
+    //! Get the logger's name
+    const std::string &name(void) const;
+
     //! Set the logger's name
     void set_name(const std::string &);
 

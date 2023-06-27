@@ -24,6 +24,7 @@ sources = [
   'app.cpp',
   'ncurses.cpp',
   'tui/tui.cpp',
+  'tui/window.cpp',
   'tui/root_window.cpp',
   'tui/basic_window.cpp',
   'logging.cpp',
@@ -78,6 +79,11 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('tui.root_window.test', tui_root_window_test)
+
+  tui_window_test = executable('tui.window.test', 'tui/window.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('tui.window.test', tui_window_test)
 endif
 
 if get_option('exec')

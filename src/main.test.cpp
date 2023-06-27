@@ -26,6 +26,7 @@
 #include "gtest/gtest.h"
 using namespace clock0;
 
+using testing::_;
 using testing::Return;
 using testing::internal::CaptureStdout;
 using testing::internal::GetCapturedStdout;
@@ -34,6 +35,8 @@ class main_test : public testing::Test
 {
 protected:
     WINDOW root;
+    WINDOW *container = new WINDOW;
+
     ncurses_mock nc;
     std::filesystem::path tmpdir;
 
@@ -64,6 +67,8 @@ protected:
     void mock_initscr(void)
     {
         EXPECT_CALL(nc, initscr()).WillRepeatedly(Return(&root));
+        EXPECT_CALL(nc, derwin(_, _, _, _, _))
+            .WillRepeatedly(Return(container));
     }
 
     void mock_getchar(void)

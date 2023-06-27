@@ -19,7 +19,9 @@
 #ifndef SRC_TUI_BASIC_WINDOW_HPP
 #define SRC_TUI_BASIC_WINDOW_HPP
 
+#include "../logging.hpp"
 #include "../ncurses.hpp"
+#include <list>
 #include <tuple>
 
 namespace clock0::tui
@@ -28,7 +30,14 @@ namespace clock0::tui
 class basic_window
 {
 protected:
+    // Ncurses window handle
     WINDOW *m_handle = nullptr;
+
+    // Children
+    std::list<basic_window *> m_children;
+
+    // basic_window logger
+    logger log { "basic_window" };
 
 public:
     /**
@@ -44,11 +53,20 @@ public:
     //! Returns a pointer to internal ncurses window handle
     WINDOW *handle(void) const;
 
+    //! Add a child window to the list of children
+    void add_child(basic_window *);
+
+    //! Remove a child window from the list of children
+    void pop_child(basic_window *);
+
+    //! Return a copy of the list of children
+    std::list<basic_window *> children(void) const;
+
     //! Pure virtual drawing of this window
-    virtual void draw(bool) = 0;
+    virtual void draw(bool post_refresh = false);
 
     //! Refresh this basic_window
-    virtual int refresh(void) = 0;
+    virtual int refresh(void);
 
     //! Returns an (x, y) tuple of the size of this window
     std::tuple<int, int> size(void) const;
@@ -56,6 +74,16 @@ public:
     //! Returns an (x, y) tuple of the position of this window
     std::tuple<int, int> position(void) const;
 };
+
+template <typename T>
+std::list<T *> list_to(const std::list<basic_window *> &children)
+{
+    std::list<T *> converted;
+    for (auto *w : children) {
+        converted.push_back(reinterpret_cast<T *>(w));
+    }
+    return converted;
+}
 
 }; // namespace clock0::tui
 

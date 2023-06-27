@@ -55,6 +55,16 @@ int getch(void)
     return 0;
 }
 
+WINDOW *derwin(WINDOW *, int, int, int, int)
+{
+    return new WINDOW;
+}
+
+int wrefresh(WINDOW *)
+{
+    return OK;
+}
+
 void getmaxyx(WINDOW *, int &y, int &x)
 {
     x = TEST_COLS;
@@ -64,6 +74,12 @@ void getmaxyx(WINDOW *, int &y, int &x)
 void getbegyx(WINDOW *, int &y, int &x)
 {
     x = y = 0;
+}
+
+int delwin(WINDOW *win)
+{
+    delete win;
+    return OK;
 }
 
 int endwin(void)

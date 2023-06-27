@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "basic_window.hpp"
+#include <algorithm>
 using namespace clock0::tui;
 
 basic_window::basic_window(WINDOW *h)
@@ -27,6 +28,40 @@ basic_window::basic_window(WINDOW *h)
 WINDOW *basic_window::handle(void) const
 {
     return m_handle;
+}
+
+void basic_window::add_child(basic_window *c)
+{
+    log.debug("child added");
+    m_children.push_back(c);
+}
+
+void basic_window::pop_child(basic_window *c)
+{
+    auto it = std::find(m_children.begin(), m_children.end(), c);
+    m_children.erase(it);
+    log.debug("child popped");
+}
+
+std::list<basic_window *> basic_window::children(void) const
+{
+    return m_children;
+}
+
+void basic_window::draw(bool post_refresh)
+{
+    for (auto *c : m_children) {
+        c->draw(post_refresh);
+    }
+}
+
+int basic_window::refresh(void)
+{
+    for (auto *c : m_children) {
+        c->refresh();
+    }
+
+    return OK;
 }
 
 std::tuple<int, int> basic_window::size(void) const

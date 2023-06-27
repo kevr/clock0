@@ -30,3 +30,21 @@ TEST(ncurses, getchar)
 {
     EXPECT_EQ(ncurses::ref().getchar(), 0);
 }
+
+TEST(ncurses, derwin)
+{
+    auto &nc = ncurses::ref();
+
+    // Initialize a fake WINDOW to be used as a parent
+    WINDOW root;
+
+    // Exercise derwin
+    auto win = nc.derwin(&root, 0, 0, 0, 0);
+    EXPECT_NE(win, nullptr);
+
+    // Exercise wrefresh
+    EXPECT_EQ(nc.wrefresh(win), OK);
+
+    // Exercise delwin
+    EXPECT_EQ(nc.delwin(win), OK);
+}

@@ -80,6 +80,11 @@ void logger::set_debug(bool enabled)
     m_debug = enabled;
 }
 
+const std::string &logger::name(void) const
+{
+    return m_name;
+}
+
 void logger::set_name(const std::string &name)
 {
     m_name = name;

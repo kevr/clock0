@@ -1,5 +1,5 @@
 /*
- * Implementation of an ncurses root (stdscr) window
+ * A standard ncurses child window wrapper.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,41 +16,54 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_TUI_ROOT_WINDOW_HPP
-#define SRC_TUI_ROOT_WINDOW_HPP
+#ifndef SRC_TUI_WINDOW_HPP
+#define SRC_TUI_WINDOW_HPP
 
 #include "../logging.hpp"
 #include "basic_window.hpp"
+#include <optional>
 
 namespace clock0::tui
 {
 
-class root_window : public basic_window
+class window : public basic_window
 {
 private:
-    static bool m_created;
+    basic_window *m_parent = nullptr;
 
-    // root_window log
-    logger log { "root_window" };
+    // window logger
+    logger log { "window" };
 
 public:
     /**
-     * Handle constructor
+     * Construct a child window
      *
-     * @param h External root ncurses (stdscr) window.
+     * @param parent Parent window
      */
-    root_window(void);
+    window(basic_window &, std::optional<std::string> name = std::nullopt);
 
-    //! Virtual destructor
-    virtual ~root_window(void);
+    //! Destruct this window
+    virtual ~window(void);
 
-    //! Draw the root_window
+    //! Return the internal parent
+    basic_window &parent(void) const;
+
+    //! Get the window logger's name
+    const std::string &name(void) const;
+
+    //! Set the window logger's name
+    void set_name(const std::string &);
+
+    //! Initialize this window
+    void create(int, int, int, int);
+
+    //! Draw this window's buffer
     void draw(bool post_refresh = false) override;
 
-    //! Refresh the root_window
+    //! Refresh this window
     int refresh(void) override;
 };
 
 }; // namespace clock0::tui
 
-#endif /* SRC_TUI_ROOT_WINDOW_HPP */
+#endif /* SRC_TUI_WINDOW_HPP */

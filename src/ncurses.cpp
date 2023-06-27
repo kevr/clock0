@@ -55,6 +55,16 @@ int ncurses::getchar(void)
     return getch();
 }
 
+WINDOW *ncurses::derwin(WINDOW *win, int y, int x, int pos_y, int pos_x)
+{
+    return ::derwin(win, y, x, pos_y, pos_x);
+}
+
+int ncurses::wrefresh(WINDOW *win)
+{
+    return ::wrefresh(win);
+}
+
 void ncurses::get_maxyx(WINDOW *win, int &y, int &x)
 {
     getmaxyx(win, y, x);
@@ -63,6 +73,11 @@ void ncurses::get_maxyx(WINDOW *win, int &y, int &x)
 void ncurses::get_begyx(WINDOW *win, int &y, int &x)
 {
     getbegyx(win, y, x);
+}
+
+int ncurses::delwin(WINDOW *win)
+{
+    return ::delwin(win);
 }
 
 int ncurses::endwin(void)

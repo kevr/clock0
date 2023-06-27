@@ -31,12 +31,25 @@ int tui::refresh(void)
 void tui::create(void)
 {
     root.reset();
+
+    // Create and refresh the root window
     root = std::make_unique<root_window>();
+    root->refresh();
+
+    // Spawn a container in the root window
+    container = std::make_shared<window>(*root, "container");
+    auto [x, y] = root->size();
+    container->create(x, y, 0, 0);
+
+    // Draw from the root
+    root->draw(true);
 }
 
 int tui::loop(void)
 {
     auto &nc = ncurses::ref();
+
+    // Main loop
     for (int ch = nc.getchar(); ch != 'q'; ch = nc.getchar()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
