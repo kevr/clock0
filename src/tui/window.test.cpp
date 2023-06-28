@@ -18,6 +18,7 @@
  */
 #include "window.hpp"
 #include "../mocks/ncurses.hpp"
+#include "../string.hpp"
 #include "root_window.hpp"
 #include "gtest/gtest.h"
 using namespace clock0;
@@ -39,14 +40,15 @@ public:
     void SetUp(void) override
     {
         ncurses::swap(nc);
+        logger::set_global_debug(true); // Toggle debug on
 
         EXPECT_CALL(nc, initscr()).WillRepeatedly(Return(&root_handle));
-
         root = std::make_unique<root_window>();
     }
 
     void TearDown(void) override
     {
+        logger::set_global_debug(false); // Toggle debug off
         ncurses::reset();
     }
 };
@@ -91,6 +93,31 @@ TEST_F(window_test, children)
 
     auto children = root->children();
     EXPECT_EQ(children.size(), 1);
+}
+
+TEST_F(window_test, default_draw)
+{
+    testing::internal::CaptureStdout();
+
+    window child(*root);
+    EXPECT_NO_THROW(child.draw());
+
+    auto output = testing::internal::GetCapturedStdout();
+    EXPECT_TRUE(search(output, "no-op"));
+}
+
+TEST_F(window_test, draw_error)
+{
+    testing::internal::CaptureStderr();
+
+    window child(*root);
+    child.on_draw([](window &) -> int {
+        return ERR;
+    });
+    child.draw();
+
+    auto output = testing::internal::GetCapturedStderr();
+    EXPECT_TRUE(search(output, "[ERR ]"));
 }
 
 TEST_F(window_test, derwin_error)
