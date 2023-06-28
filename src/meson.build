@@ -27,6 +27,7 @@ sources = [
   'tui/window.cpp',
   'tui/root_window.cpp',
   'tui/basic_window.cpp',
+  'project/project.cpp',
   'logging.cpp',
   'string.cpp',
   'filesystem.cpp',
@@ -89,6 +90,12 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('tui.tui.test', tui_tui_test)
+
+  project_project_test = executable('project.project.test',
+    'project/project.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('project.project.test', project_project_test)
 endif
 
 if get_option('exec')
