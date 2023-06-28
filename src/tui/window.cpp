@@ -66,12 +66,21 @@ void window::create(int x, int y, int pos_x, int pos_y)
     }
 }
 
+void window::on_draw(std::function<int(window &)> action)
+{
+    m_draw = action;
+}
+
 void window::draw(bool post_refresh)
 {
     // Draw window details here
     // For this base child window, this is no-op.
     // Derivatives can call window::draw(post_refresh) to deal with
     // post_refresh and graph traversal.
+    if (m_draw(*this) != OK) {
+        log.error("failed to draw");
+        return;
+    }
 
     // Refresh if post_refresh was provided
     if (post_refresh)

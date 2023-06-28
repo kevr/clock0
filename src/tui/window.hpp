@@ -21,6 +21,7 @@
 
 #include "../logging.hpp"
 #include "basic_window.hpp"
+#include <functional>
 #include <optional>
 
 namespace clock0::tui
@@ -29,10 +30,17 @@ namespace clock0::tui
 class window : public basic_window
 {
 private:
+    // Internal pointer to parent basic_window
     basic_window *m_parent = nullptr;
 
-    // window logger
+    // A logger constructed with the default name "window"
     logger log { "window" };
+
+    // Internal callback invoked within draw()
+    std::function<int(window &)> m_draw = [this](window &) {
+        log.debug("no-op");
+        return OK; // no-op by default
+    };
 
 public:
     /**
@@ -56,6 +64,9 @@ public:
 
     //! Initialize this window
     void create(int, int, int, int);
+
+    //! Bind the internal draw callback to be called within draw()
+    void on_draw(std::function<int(window &)>);
 
     //! Draw this window's buffer
     void draw(bool post_refresh = false) override;

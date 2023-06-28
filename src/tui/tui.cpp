@@ -41,6 +41,10 @@ void tui::create(void)
     auto [x, y] = root->size();
     container->create(x, y, 0, 0);
 
+    container->on_draw([](window &w) -> int {
+        return ncurses::ref().wborder(w.handle(), 0, 0, 0, 0, 0, 0, 0, 0);
+    });
+
     // Draw from the root
     root->draw(true);
 }
