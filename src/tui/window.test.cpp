@@ -84,7 +84,7 @@ TEST_F(window_test, refreshes_from_root)
     auto [x, y] = root->size();
     child.create(x, y, 0, 0);
 
-    root->refresh();
+    EXPECT_EQ(root->refresh(), OK);
 }
 
 TEST_F(window_test, children)
