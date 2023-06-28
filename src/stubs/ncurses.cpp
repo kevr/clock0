@@ -86,3 +86,9 @@ int endwin(void)
 {
     return OK;
 }
+
+int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype, chtype, chtype,
+            chtype)
+{
+    return OK;
+}

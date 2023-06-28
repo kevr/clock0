@@ -84,3 +84,9 @@ int ncurses::endwin(void)
 {
     return ::endwin();
 }
+
+int ncurses::wborder(WINDOW *win, chtype ls, chtype rs, chtype ts, chtype bs,
+                     chtype tl, chtype tr, chtype bl, chtype br)
+{
+    return ::wborder(win, ls, rs, ts, bs, tl, tr, bl, br);
+}

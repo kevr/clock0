@@ -24,6 +24,15 @@ const bool FALSE = false;
 const int OK = 0;
 const int ERR = -1;
 
+typedef wchar_t chtype;
+const chtype CLOCK0_LINE_DEFAULT = '*';
+const chtype ACS_VLINE = CLOCK0_LINE_DEFAULT;
+const chtype ACS_HLINE = CLOCK0_LINE_DEFAULT;
+const chtype ACS_ULCORNER = CLOCK0_LINE_DEFAULT;
+const chtype ACS_URCORNER = CLOCK0_LINE_DEFAULT;
+const chtype ACS_LLCORNER = CLOCK0_LINE_DEFAULT;
+const chtype ACS_LRCORNER = CLOCK0_LINE_DEFAULT;
+
 struct WINDOW {
 };
 
@@ -44,5 +53,9 @@ void getmaxyx(WINDOW *, int &, int &);
 void getbegyx(WINDOW *, int &, int &);
 int delwin(WINDOW *);
 int endwin(void);
+
+// Styling
+int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype, chtype, chtype,
+            chtype);
 
 #endif /* SRC_STUBS_NCURSES_HPP */

@@ -48,3 +48,18 @@ TEST(ncurses, derwin)
     // Exercise delwin
     EXPECT_EQ(nc.delwin(win), OK);
 }
+
+TEST(ncurses, wborder)
+{
+    WINDOW root;
+    EXPECT_EQ(ncurses::ref().wborder(&root,
+                                     ACS_VLINE,
+                                     ACS_VLINE,
+                                     ACS_HLINE,
+                                     ACS_HLINE,
+                                     ACS_ULCORNER,
+                                     ACS_URCORNER,
+                                     ACS_LLCORNER,
+                                     ACS_LRCORNER),
+              OK);
+}

@@ -51,6 +51,10 @@ public:
     virtual void get_begyx(WINDOW *, int &, int &);
     virtual int delwin(WINDOW *);
     virtual int endwin(void);
+
+    // Styling
+    virtual int wborder(WINDOW *, chtype, chtype, chtype, chtype, chtype,
+                        chtype, chtype, chtype);
 };
 
 }; // namespace clock0
