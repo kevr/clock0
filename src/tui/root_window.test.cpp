@@ -85,6 +85,18 @@ TEST_F(root_window_test, draw)
     root.draw(true);
 }
 
+TEST_F(root_window_test, refresh_errors)
+{
+    mock_initscr(&root);
+    tui::root_window root;
+
+    EXPECT_CALL(nc, refresh()).WillOnce(Return(ERR));
+    EXPECT_EQ(root.refresh(), ERR);
+
+    EXPECT_CALL(nc, refresh()).WillOnce(Return(ERR));
+    EXPECT_EQ(root.draw(true), ERR);
+}
+
 TEST_F(root_window_test, initscr_error)
 {
     mock_initscr(nullptr);

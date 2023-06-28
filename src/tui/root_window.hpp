@@ -45,7 +45,7 @@ public:
     virtual ~root_window(void);
 
     //! Draw the root_window
-    void draw(bool post_refresh = false) override;
+    int draw(bool post_refresh = false) override;
 
     //! Refresh the root_window
     int refresh(void) override;

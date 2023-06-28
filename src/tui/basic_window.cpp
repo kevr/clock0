@@ -48,11 +48,14 @@ std::list<basic_window *> basic_window::children(void) const
     return m_children;
 }
 
-void basic_window::draw(bool post_refresh)
+int basic_window::draw(bool post_refresh)
 {
     for (auto *c : m_children) {
-        c->draw(post_refresh);
+        if (auto rc = c->draw(post_refresh); rc != OK)
+            return rc;
     }
+
+    return OK;
 }
 
 int basic_window::refresh(void)

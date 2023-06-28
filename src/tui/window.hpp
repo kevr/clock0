@@ -69,7 +69,7 @@ public:
     void on_draw(std::function<int(window &)>);
 
     //! Draw this window's buffer
-    void draw(bool post_refresh = false) override;
+    int draw(bool post_refresh = false) override;
 
     //! Refresh this window
     int refresh(void) override;

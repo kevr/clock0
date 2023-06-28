@@ -71,30 +71,32 @@ void window::on_draw(std::function<int(window &)> action)
     m_draw = action;
 }
 
-void window::draw(bool post_refresh)
+int window::draw(bool post_refresh)
 {
     // Draw window details here
     // For this base child window, this is no-op.
     // Derivatives can call window::draw(post_refresh) to deal with
     // post_refresh and graph traversal.
-    if (m_draw(*this) != OK) {
+    if (auto rc = m_draw(*this); rc != OK) {
         log.error("failed to draw");
-        return;
+        return rc;
     }
 
     // Refresh if post_refresh was provided
-    if (post_refresh)
-        refresh();
+    if (post_refresh) {
+        if (auto rc = refresh(); rc != OK)
+            return rc;
+    }
 
     // Use basic_window::draw to travel down the graph
-    basic_window::draw(post_refresh);
+    return basic_window::draw(post_refresh);
 }
 
 int window::refresh(void)
 {
     log.info("refreshed");
 
-    if (int rc = ncurses::ref().wrefresh(m_handle))
+    if (auto rc = ncurses::ref().wrefresh(m_handle))
         return rc;
 
     return basic_window::refresh();

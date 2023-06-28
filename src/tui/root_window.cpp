@@ -53,21 +53,33 @@ root_window::~root_window(void)
     m_created = false;
 }
 
-void root_window::draw(bool post_refresh)
+int root_window::draw(bool post_refresh)
 {
-    // Call draw on children; the root content
-    basic_window::draw(post_refresh);
+    // In root_window's case, a true post_refresh means the root_window
+    // should refresh draws after they occur; since the root_window doesn't
+    // draw anything itself, `stdscr` is refreshed here to prepare for
+    // drawing of children windows.
+    // ncurses::ref() is accessed to solely refresh `stdscr`. root_window's
+    // refresh() member also calls refresh on any children.
+    if (post_refresh) {
+        if (auto rc = ncurses::ref().refresh(); rc != OK)
+            return rc;
+    }
 
-    // Refresh starting from this root window if we should
-    if (post_refresh)
-        refresh();
+    // Call draw on children; the root content.
+    if (auto rc = basic_window::draw(post_refresh); rc != OK)
+        return rc;
+
+    // Since no errors were encountered above, return OK
+    return OK;
 }
 
 int root_window::refresh(void)
 {
-    // Refresh `stdscr` window
-    ncurses::ref().refresh();
+    // Refresh `stdscr` window.
+    if (auto rc = ncurses::ref().refresh(); rc != OK)
+        return rc;
 
-    // Refresh children windows
+    // Refresh children windows.
     return basic_window::refresh();
 }

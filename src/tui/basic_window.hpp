@@ -63,7 +63,7 @@ public:
     std::list<basic_window *> children(void) const;
 
     //! Pure virtual drawing of this window
-    virtual void draw(bool post_refresh = false);
+    virtual int draw(bool post_refresh = false);
 
     //! Refresh this basic_window
     virtual int refresh(void);

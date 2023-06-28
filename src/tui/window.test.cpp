@@ -100,7 +100,7 @@ TEST_F(window_test, default_draw)
     testing::internal::CaptureStdout();
 
     window child(*root);
-    EXPECT_NO_THROW(child.draw());
+    EXPECT_EQ(child.draw(), OK);
 
     auto output = testing::internal::GetCapturedStdout();
     EXPECT_TRUE(search(output, "no-op"));
@@ -108,16 +108,26 @@ TEST_F(window_test, default_draw)
 
 TEST_F(window_test, draw_error)
 {
-    testing::internal::CaptureStderr();
-
     window child(*root);
     child.on_draw([](window &) -> int {
         return ERR;
     });
-    child.draw();
+    EXPECT_EQ(child.draw(), ERR);
+}
 
-    auto output = testing::internal::GetCapturedStderr();
-    EXPECT_TRUE(search(output, "[ERR ]"));
+TEST_F(window_test, root_draw_post_refresh_error)
+{
+    window child(*root);
+    EXPECT_CALL(nc, wrefresh(_)).WillOnce(Return(ERR));
+    EXPECT_EQ(child.draw(true), ERR);
+}
+
+TEST_F(window_test, draw_post_refresh_error)
+{
+    window child(*root);
+    EXPECT_CALL(nc, refresh()).WillOnce(Return(OK));
+    EXPECT_CALL(nc, wrefresh(_)).WillOnce(Return(ERR));
+    EXPECT_EQ(root->draw(true), ERR);
 }
 
 TEST_F(window_test, derwin_error)
