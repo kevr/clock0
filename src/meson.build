@@ -34,7 +34,7 @@ sources = [
 ]
 
 # Shared third-party dependencies
-tp_deps = [fmt, boost_po]
+tp_deps = [fmt, boost_po, jsoncpp]
 
 if get_option('tests')
   subdir('stubs')
