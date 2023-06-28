@@ -33,12 +33,7 @@ window::window(basic_window &parent, std::optional<std::string> name)
 window::~window(void)
 {
     m_parent->pop_child(this);
-
-    if (m_handle) {
-        ncurses::ref().delwin(m_handle);
-        m_handle = nullptr;
-    }
-
+    end();
     log.debug("window destructed");
 }
 
@@ -57,13 +52,29 @@ void window::set_name(const std::string &name)
     log.set_name(name);
 }
 
-void window::create(int x, int y, int pos_x, int pos_y)
+int window::create(int x, int y, int pos_x, int pos_y)
 {
-    auto &nc = ncurses::ref();
-    m_handle = nc.derwin(m_parent->handle(), y, x, pos_y, pos_x);
-    if (!m_handle) {
-        throw std::runtime_error("unable to create a child window");
+    // First, end the current window if we have any
+    end();
+
+    m_handle = ncurses::ref().derwin(m_parent->handle(), y, x, pos_y, pos_x);
+    if (!m_handle)
+        return ERR;
+
+    return m_handle ? OK : ERR;
+}
+
+int window::end(void)
+{
+    if (m_handle) {
+        if (auto rc = ncurses::ref().delwin(m_handle))
+            return rc;
+
+        m_handle = nullptr;
+        return OK;
     }
+
+    return ERR;
 }
 
 void window::on_draw(std::function<int(window &)> action)

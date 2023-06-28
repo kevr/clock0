@@ -40,7 +40,7 @@ private:
 
 public:
     //! Initialize the root window of the TUI
-    void create(void);
+    int create(void);
 
     //! Refresh the TUI
     int refresh(void);

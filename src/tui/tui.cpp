@@ -28,25 +28,28 @@ int tui::refresh(void)
     return root->refresh();
 }
 
-void tui::create(void)
+int tui::create(void)
 {
+    container.reset();
     root.reset();
 
     // Create and refresh the root window
     root = std::make_unique<root_window>();
-    root->refresh();
+    if (auto rc = root->refresh())
+        return rc;
 
     // Spawn a container in the root window
     container = std::make_shared<window>(*root, "container");
     auto [x, y] = root->size();
-    container->create(x, y, 0, 0);
+    if (auto rc = container->create(x, y, 0, 0))
+        return rc;
 
     container->on_draw([](window &w) -> int {
         return ncurses::ref().wborder(w.handle(), 0, 0, 0, 0, 0, 0, 0, 0);
     });
 
     // Draw from the root
-    root->draw(true);
+    return root->draw(true);
 }
 
 int tui::loop(void)

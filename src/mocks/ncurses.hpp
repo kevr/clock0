@@ -32,6 +32,7 @@ public:
     MOCK_METHOD(int, getchar, (), (override));
     MOCK_METHOD(WINDOW *, derwin, (WINDOW *, int, int, int, int), (override));
     MOCK_METHOD(int, wrefresh, (WINDOW *), (override));
+    MOCK_METHOD(int, delwin, (WINDOW *), (override));
 };
 
 }; // namespace clock0

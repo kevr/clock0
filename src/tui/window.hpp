@@ -63,7 +63,10 @@ public:
     void set_name(const std::string &);
 
     //! Initialize this window
-    void create(int, int, int, int);
+    int create(int, int, int, int);
+
+    //! End this window
+    int end(void);
 
     //! Bind the internal draw callback to be called within draw()
     void on_draw(std::function<int(window &)>);

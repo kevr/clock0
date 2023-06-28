@@ -82,7 +82,7 @@ TEST_F(window_test, refreshes_from_root)
     window child(*root);
 
     auto [x, y] = root->size();
-    child.create(x, y, 0, 0);
+    EXPECT_EQ(child.create(x, y, 0, 0), OK);
 
     EXPECT_EQ(root->refresh(), OK);
 }
@@ -135,7 +135,7 @@ TEST_F(window_test, derwin_error)
     EXPECT_CALL(nc, derwin(_, _, _, _, _)).WillOnce(Return(nullptr));
 
     window child(*root);
-    EXPECT_THROW(child.create(0, 0, 0, 0), std::runtime_error);
+    EXPECT_EQ(child.create(0, 0, 0, 0), ERR);
 }
 
 TEST_F(window_test, refresh_error)
@@ -143,8 +143,21 @@ TEST_F(window_test, refresh_error)
     EXPECT_CALL(nc, derwin(_, _, _, _, _)).WillOnce(Return(container));
 
     window child(*root);
-    EXPECT_NO_THROW(child.create(0, 0, 0, 0));
+    EXPECT_EQ(child.create(0, 0, 0, 0), OK);
 
     EXPECT_CALL(nc, wrefresh(_)).WillOnce(Return(ERR));
     EXPECT_EQ(child.refresh(), ERR);
+}
+
+TEST_F(window_test, end_delwin_error)
+{
+    EXPECT_CALL(nc, derwin(_, _, _, _, _)).WillOnce(Return(container));
+
+    window child(*root);
+    EXPECT_EQ(child.create(0, 0, 0, 0), OK);
+
+    // First, child.end() should fail a delwin. On destruction, it is
+    // blindly attempted again.
+    EXPECT_CALL(nc, delwin(_)).WillRepeatedly(Return(ERR));
+    EXPECT_EQ(child.end(), ERR);
 }

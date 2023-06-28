@@ -84,6 +84,11 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('tui.window.test', tui_window_test)
+
+  tui_tui_test = executable('tui.tui.test', 'tui/tui.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('tui.tui.test', tui_tui_test)
 endif
 
 if get_option('exec')
