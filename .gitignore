@@ -5,4 +5,5 @@ compile_commands.json
 # Ignore meson wrapdb downloads
 subprojects/googletest-*/
 subprojects/fmt-*/
+subprojects/jsoncpp-*/
 subprojects/packagecache/

@@ -28,4 +28,8 @@ boost_po = dependency('boost',
   modules : ['program_options'],
   required : true)
 
+jsoncpp_proj = subproject('jsoncpp',
+  default_options : ['default_library=static'])
+jsoncpp = jsoncpp_proj.get_variable('jsoncpp_dep')
+
 subdir('src')
