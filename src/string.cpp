@@ -17,10 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "string.hpp"
+#include <set>
 using namespace clock0;
 
 bool clock0::search(const std::string &target, const char *regex_string)
 {
     std::regex re(regex_string);
     return std::regex_search(target, re);
+}
+
+std::string clock0::rstrip(std::string target)
+{
+    static const std::set<char> to_strip { ' ', '\t', '\n' };
+
+    std::size_t i = target.size();
+    for (; i >= 1 && to_strip.find(target[i - 1]) != to_strip.end(); --i)
+        ;
+
+    if (i != target.size()) {
+        target.erase(i, target.size() - i);
+    }
+
+    return target;
 }

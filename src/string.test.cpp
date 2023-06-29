@@ -1,5 +1,5 @@
 /*
- * String utilities.
+ * Tests of string utilities.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,21 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_STRING_HPP
-#define SRC_STRING_HPP
+#include "string.hpp"
+#include "gtest/gtest.h"
+using namespace clock0;
 
-#include <regex>
-#include <string>
-
-namespace clock0
+TEST(string, rstrip)
 {
-
-//! Regex search of a string
-bool search(const std::string &, const char *);
-
-//! Strip whitespace off the end of a string
-std::string rstrip(std::string);
-
-}; // namespace clock0
-
-#endif /* SRC_STRING_HPP */
+    EXPECT_EQ(rstrip("test\ntest"), "test\ntest");
+    EXPECT_EQ(rstrip("test\n\n"), "test");
+    EXPECT_EQ(rstrip("test \n"), "test");
+    EXPECT_EQ(rstrip(""), "");
+    EXPECT_EQ(rstrip("\n\n"), "");
+}
