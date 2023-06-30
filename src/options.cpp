@@ -18,6 +18,7 @@
  */
 #include "options.hpp"
 #include "config.hpp"
+#include "project/data.hpp"
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 using namespace clock0;
@@ -86,7 +87,11 @@ options::options(void)
     m_cmdline.add_options()("help,h", "print a help summary")(
         "config,c",
         boost::program_options::value<std::string>()->default_value(conf_path),
-        "specify a configuration file");
+        "specify a configuration file")(
+        "file,f",
+        boost::program_options::value<std::string>()->default_value(
+            project::DATA_FILE),
+        "project data file");
 }
 
 void options::add(const char *arg, const char *help)

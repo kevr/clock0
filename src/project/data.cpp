@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "data.hpp"
+#include "../options.hpp"
 #include <filesystem>
 #include <fstream>
 #include <set>
@@ -63,8 +64,9 @@ std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
     auto path = std::filesystem::absolute(".");
     bool found = false;
 
+    const auto base = options::ref().get<std::string>("file");
     do {
-        auto data_file = path / DATA_FILE;
+        auto data_file = path / base;
         if (std::filesystem::exists(data_file)) {
             found = true;
             break;
@@ -72,7 +74,7 @@ std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
         path = path.parent_path();
     } while (path != "/");
 
-    return std::make_tuple(found, path / DATA_FILE);
+    return std::make_tuple(found, path / base);
 }
 
 Json::Value clock0::project::create_data(const std::string &name,

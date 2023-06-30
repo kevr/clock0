@@ -18,6 +18,7 @@
  */
 #include "create.hpp"
 #include "../io/cin.hpp"
+#include "../options.hpp"
 #include "../string.hpp"
 #include "data.hpp"
 #include "fmt/format.h"
@@ -39,8 +40,11 @@ const clock0::project::project &dialogue::project(void) const
 
 bool dialogue::start(void)
 {
+    std::filesystem::path data_file(options::ref().get<std::string>("file"));
+
     std::cout << fmt::format(
-        "Doesn't look like {} exists, want to create it? (Y/n): ", DATA_FILE);
+        "Doesn't look like {} exists, want to create it? (Y/n): ",
+        data_file.c_str());
 
     char ch = 0;
     bool good = bool(m_cin >> ch);

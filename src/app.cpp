@@ -169,21 +169,21 @@ std::tuple<bool, std::filesystem::path> application::create_project_data(void)
         return std::make_tuple(false, path);
 
     // Use `dia` to create a fresh project data file.
-    auto current_path = std::filesystem::absolute(".");
-    path = current_path / ".clock0.json";
+    std::filesystem::path new_path(options::ref().get<std::string>("file"));
+    new_path = std::filesystem::absolute(new_path);
 
     auto root = project::create_data(dia.project().name(), dia.project().id());
     {
         std::ofstream ofs;
         try {
-            ofs = open(path.c_str());
+            ofs = open(new_path.c_str());
         } catch (std::filesystem::filesystem_error &ec) {
-            return std::make_tuple(false, path);
+            return std::make_tuple(false, new_path);
         }
 
         // Write out json to `path`
         ofs << root;
     }
 
-    return std::make_tuple(true, path);
+    return std::make_tuple(true, new_path);
 }
