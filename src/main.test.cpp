@@ -238,6 +238,27 @@ TEST_F(main_test, verbose)
     EXPECT_TRUE(search(output, "verbose logging enabled"));
 }
 
+TEST_F(main_test, file_option)
+{
+    auto path = tmpdir / "custom.json";
+    mock_tui();
+
+    MAKE_ARGS(2, "--file", path.c_str());
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
+
+    Json::Value root;
+    {
+        std::ifstream ifs(path.c_str(), std::ios::in | std::ios::binary);
+        ifs >> root;
+    }
+
+    EXPECT_EQ(root["id"].asInt(), 0);
+    EXPECT_EQ(root["name"].asString(), "test");
+    EXPECT_TRUE(root["lists"].isArray());
+}
+
 TEST_F(cin_main_test, cin_fails)
 {
     auto &is = cin.stream();
