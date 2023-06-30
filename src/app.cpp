@@ -41,12 +41,8 @@ int application::run(void)
     // Initialize logging details
     logger::init();
 
-    {
-        // Deal with program arguments via command-line and configuration
-        auto &opt = options::ref();
-        if (auto rc = handle_program_args(); rc || opt.exists("help"))
-            return rc;
-    }
+    if (auto rc = handle_program_args(); rc || options::ref().exists("help"))
+        return rc;
 
     if (auto rc = gather_project_data())
         return rc;
