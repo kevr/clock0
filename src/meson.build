@@ -52,7 +52,7 @@ if get_option('tests')
 
   # In-house static library for tests
   libclock0_test = static_library('clock0_test', test_sources,
-    dependencies : fmt,
+    dependencies : tp_deps,
     cpp_args : test_args)
   clock0_test = declare_dependency(link_with : libclock0_test)
 
@@ -120,7 +120,7 @@ endif
 if get_option('exec')
   # In-house static library for executables
   libclock0 = static_library('clock0', sources,
-    dependencies : fmt)
+    dependencies : tp_deps)
   clock0 = declare_dependency(link_with : libclock0)
 
   # Third-party executable dependencies
