@@ -82,11 +82,6 @@ public:
 
 std::ostream &operator<<(std::ostream &, const options &);
 
-enum options_errors : int {
-    OPT_CMDLINE_ERROR = 1,
-    OPT_CONFIG_ERROR = 2,
-};
-
 template <typename F>
 bool parse_args(F f)
 {
