@@ -45,7 +45,7 @@ After running tests, coverage can be collected using the `coverage` target:
 
 ## Installation
 
-Once build, the project can be installed to the system by issuing they
+Once built, the project can be installed to the system by issuing they
 `install` target:
 
     $ ninja -C build-exec install --skip-subprojects
