@@ -74,6 +74,15 @@ private:
      * @returns 0 on success, non-zero on error
      */
     int handle_program_args(void);
+
+    //! Gather project data from files
+    int gather_project_data(void);
+
+    //! Open a file for binary writing
+    std::ofstream open(const char *);
+
+    //! Create a (or return existing) project data file via user prompt
+    std::tuple<bool, std::filesystem::path> create_project_data(void);
 };
 
 }; // namespace clock0

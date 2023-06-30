@@ -34,6 +34,8 @@ private:
     std::string m_name;
 
 public:
+    project(void) = default;
+
     /**
      * Name constructor
      *

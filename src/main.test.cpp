@@ -16,13 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <filesystem>
 #define main _main
 #include "main.cpp"
 #undef main
 
 #include "filesystem.hpp"
+#include "io/mocks/cin.hpp"
 #include "mocks/ncurses.hpp"
 #include "string.hpp"
+#include "system/return_codes.hpp"
 #include "gtest/gtest.h"
 using namespace clock0;
 
@@ -40,6 +43,8 @@ protected:
     ncurses_mock nc;
     std::filesystem::path tmpdir;
 
+    std::string cwd;
+
 public:
     void SetUp(void) override
     {
@@ -48,10 +53,15 @@ public:
         tmpdir = clock0::filesystem::make_tmpdir();
         auto fakedir = tmpdir / ".home";
         setenv("XDG_CONFIG_HOME", fakedir.c_str(), 0);
+
+        this->cwd = std::filesystem::current_path();
+        chdir(tmpdir.c_str());
     }
 
     void TearDown(void) override
     {
+        chdir(this->cwd.c_str());
+
         std::filesystem::remove_all(tmpdir);
         logger::set_global_logfile("");
         logger::set_global_debug(false);
@@ -83,6 +93,44 @@ protected:
     }
 };
 
+class cin_main_test : public main_test
+{
+protected:
+    io::cin_mock cin;
+
+public:
+    void SetUp(void) override
+    {
+        main_test::SetUp();
+        io::cin::swap(cin);
+    }
+
+    void TearDown(void) override
+    {
+        io::cin::reset();
+        main_test::TearDown();
+    }
+};
+
+template <typename Function>
+void write_stdin(const char *data, Function f)
+{
+    int files[2];
+    int status = pipe(files);
+    ASSERT_NE(status, -1);
+
+    status = dup2(files[0], STDIN_FILENO);
+    ASSERT_NE(status, -1);
+
+    std::size_t size = strlen(data);
+    std::size_t bytes = write(files[1], data, size);
+    close(files[1]);
+    ASSERT_EQ(bytes, size);
+
+    f();
+    close(files[0]);
+}
+
 #define MAKE_SIMPLE_ARGS()                                                    \
     int argc = 1;                                                             \
     const char *c_argv[] = { "clock0" };                                      \
@@ -97,19 +145,29 @@ TEST_F(main_test, runs)
 {
     mock_tui();
     MAKE_SIMPLE_ARGS();
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
+}
+
+TEST(main, missing_data_file)
+{
+    MAKE_SIMPLE_ARGS();
+    write_stdin("n\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_DATA_MISSING);
+    });
 }
 
 TEST_F(main_test, invalid_option)
 {
     MAKE_ARGS(1, "--fakeoption");
-    EXPECT_EQ(_main(argc, argv), OPT_CMDLINE_ERROR);
+    EXPECT_EQ(_main(argc, argv), RET_CMDLINE_ERROR);
 }
 
 TEST_F(main_test, help)
 {
     MAKE_ARGS(1, "--help");
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    EXPECT_EQ(_main(argc, argv), RET_OK);
 }
 
 TEST_F(main_test, missing_config)
@@ -117,7 +175,9 @@ TEST_F(main_test, missing_config)
     mock_tui();
     const char *conf_path = "/does-not-exist/clock0.conf";
     MAKE_ARGS(2, "--config", conf_path);
-    EXPECT_EQ(_main(argc, argv), 0);
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
 }
 
 TEST_F(main_test, config)
@@ -130,7 +190,9 @@ TEST_F(main_test, config)
     ofs.close();
 
     MAKE_ARGS(2, "--config", conf_path.c_str());
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
 }
 
 TEST_F(main_test, config_error)
@@ -142,7 +204,7 @@ TEST_F(main_test, config_error)
     ofs.close();
 
     MAKE_ARGS(2, "--config", conf_path.c_str());
-    EXPECT_EQ(_main(argc, argv), OPT_CONFIG_ERROR);
+    EXPECT_EQ(_main(argc, argv), RET_CONFIG_ERROR);
 }
 
 TEST_F(main_test, log)
@@ -151,7 +213,9 @@ TEST_F(main_test, log)
     auto log_path = tmpdir / "clock0.log";
 
     MAKE_ARGS(2, "--log", log_path.c_str());
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
 
     std::ifstream ifs(log_path.c_str(), std::ios::in);
     std::string line;
@@ -166,8 +230,69 @@ TEST_F(main_test, verbose)
     CaptureStdout();
 
     MAKE_ARGS(1, "--verbose");
-    EXPECT_EQ(_main(argc, argv), SUCCESS);
+    write_stdin("Y\ntest\n", [&] {
+        EXPECT_EQ(_main(argc, argv), RET_OK);
+    });
 
     auto output = GetCapturedStdout();
     EXPECT_TRUE(search(output, "verbose logging enabled"));
+}
+
+TEST_F(cin_main_test, cin_fails)
+{
+    auto &is = cin.stream();
+    is.str("Y\n");
+
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), RET_DATA_MISSING);
+}
+
+TEST_F(cin_main_test, cin_empty)
+{
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), RET_DATA_MISSING);
+}
+
+TEST_F(cin_main_test, discover_data_succeeds)
+{
+    auto data = tmpdir / ".clock0.json";
+
+    {
+        Json::Value root;
+        root["name"] = "test";
+        root["id"] = 0;
+
+        std::ofstream ofs(data, std::ios::out);
+        ofs << root;
+    }
+
+    mock_tui();
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), RET_OK);
+}
+
+TEST_F(cin_main_test, unable_to_create_data_file)
+{
+    chdir("/");
+
+    auto &is = cin.stream();
+    is.str("Y\ntest\n");
+
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), RET_DATA_MISSING);
+}
+
+TEST_F(main_test, data_error)
+{
+    auto data_path = tmpdir / project::DATA_FILE;
+
+    {
+        Json::Value root;
+
+        std::ofstream ofs(data_path.c_str(), std::ios::out);
+        ofs << root;
+    }
+
+    MAKE_SIMPLE_ARGS();
+    EXPECT_EQ(_main(argc, argv), RET_DATA_ERROR);
 }

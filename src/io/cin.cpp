@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * An std::cin-like command-line input class.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,24 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "app.hpp"
-#include "config.hpp"
-#include "enums.hpp"
-#include "logging.hpp"
-#include "options.hpp"
-#include "project/create.hpp"
-#include "project/data.hpp"
-#include "project/project.hpp"
-#include "string.hpp"
-#include "tui/tui.hpp"
-#include <boost/program_options/errors.hpp>
-#include <cctype>
+#include "cin.hpp"
+#include "../string.hpp"
 #include <iostream>
-#include <string>
-using namespace clock0;
+using namespace clock0::io;
 
-int main(int argc, char *argv[])
+std::istream &cin::operator>>(char &ch)
 {
-    application app(argc, argv);
-    return app.run();
+    std::cin >> ch;
+    return std::cin;
+}
+
+std::istream &cin::clear(void)
+{
+    std::cin.clear();
+    std::cin.ignore();
+    return std::cin;
+}
+
+std::istream &cin::getline(std::string &line)
+{
+    return std::getline(std::cin, line);
 }

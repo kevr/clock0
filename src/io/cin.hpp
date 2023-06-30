@@ -1,6 +1,5 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * An std::cin-like command-line input class.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,24 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "app.hpp"
-#include "config.hpp"
-#include "enums.hpp"
-#include "logging.hpp"
-#include "options.hpp"
-#include "project/create.hpp"
-#include "project/data.hpp"
-#include "project/project.hpp"
-#include "string.hpp"
-#include "tui/tui.hpp"
-#include <boost/program_options/errors.hpp>
-#include <cctype>
-#include <iostream>
-#include <string>
-using namespace clock0;
+#ifndef SRC_IO_CIN_HPP
+#define SRC_IO_CIN_HPP
 
-int main(int argc, char *argv[])
+#include "../singleton.hpp"
+#include <ios>
+#include <iostream>
+#include <sstream>
+
+namespace clock0::io
 {
-    application app(argc, argv);
-    return app.run();
-}
+
+/**
+ * A base std::cin wrapper in singleton form.
+ *
+ * Accesses to std::cin should go through this class's singleton.
+ * Therefore, accesses can be mocked within tests.
+ */
+class cin : public singleton<cin>
+{
+public:
+    virtual ~cin(void) = default;
+
+    virtual std::istream &operator>>(char &);
+    virtual std::istream &clear(void);
+    virtual std::istream &getline(std::string &);
+};
+
+}; // namespace clock0::io
+
+#endif /* SRC_IO_CIN_HPP */

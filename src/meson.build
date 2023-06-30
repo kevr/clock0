@@ -28,10 +28,17 @@ sources = [
   'tui/root_window.cpp',
   'tui/basic_window.cpp',
   'project/project.cpp',
+  'project/data.cpp',
+  'project/create.cpp',
   'logging.cpp',
   'string.cpp',
   'filesystem.cpp',
   'options.cpp',
+  'io/cin.cpp',
+]
+
+test_sources = sources + [
+  'io/mocks/cin.cpp',
 ]
 
 # Shared third-party dependencies
@@ -44,7 +51,7 @@ if get_option('tests')
   test_args = ['-DBUILD_TESTS']
 
   # In-house static library for tests
-  libclock0_test = static_library('clock0_test', sources,
+  libclock0_test = static_library('clock0_test', test_sources,
     dependencies : fmt,
     cpp_args : test_args)
   clock0_test = declare_dependency(link_with : libclock0_test)
@@ -71,12 +78,18 @@ if get_option('tests')
     cpp_args : test_args)
   test('options.test', options_test)
 
+  string_test = executable('string.test', 'string.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('string.test', string_test)
+
   ncurses_test = executable('ncurses.test', 'ncurses.test.cpp',
     dependencies : test_deps,
     cpp_args : test_args)
   test('ncurses.test', ncurses_test)
 
-  tui_root_window_test = executable('tui.root_window.test', 'tui/root_window.test.cpp',
+  tui_root_window_test = executable('tui.root_window.test',
+    'tui/root_window.test.cpp',
     dependencies : test_deps,
     cpp_args : test_args)
   test('tui.root_window.test', tui_root_window_test)
@@ -96,6 +109,12 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('project.project.test', project_project_test)
+
+  project_data_test = executable('project.data.test',
+    'project/data.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('project.data.test', project_data_test)
 endif
 
 if get_option('exec')

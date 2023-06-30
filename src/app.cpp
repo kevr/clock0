@@ -19,8 +19,13 @@
 #include "app.hpp"
 #include "enums.hpp"
 #include "logging.hpp"
+#include "project/create.hpp"
+#include "project/data.hpp"
+#include "system/return_codes.hpp"
 #include "tui/tui.hpp"
 #include <cstdlib>
+#include <filesystem>
+#include <system_error>
 using namespace clock0;
 
 application::application(int argc, char **argv)
@@ -42,6 +47,9 @@ int application::run(void)
         if (auto rc = handle_program_args(); rc || opt.exists("help"))
             return rc;
     }
+
+    if (auto rc = gather_project_data())
+        return rc;
 
     // Initialize the TUI
     ui.create();
@@ -72,12 +80,12 @@ int application::handle_program_args(void)
         opt.parse_args(argc, argv);
     };
     if (!parse_args(parse_cmdline))
-        return OPT_CMDLINE_ERROR;
+        return RET_CMDLINE_ERROR;
 
     // Handle --help if provided
     if (opt.exists("help")) {
         std::cout << opt << std::endl;
-        return SUCCESS;
+        return RET_OK;
     }
 
     // Parse any provided config if it can be found
@@ -88,7 +96,7 @@ int application::handle_program_args(void)
             opt.parse_args(conf);
         };
         if (!parse_args(parse_config))
-            return OPT_CONFIG_ERROR;
+            return RET_CONFIG_ERROR;
         config_loaded = true;
     }
 
@@ -110,5 +118,76 @@ int application::handle_program_args(void)
         log.info("configuration loaded at '{}'", conf);
     log.debug("verbose logging enabled");
 
-    return SUCCESS;
+    return RET_OK;
+}
+
+int application::gather_project_data(void)
+{
+    project::data data;
+
+    auto [found, path] = create_project_data();
+    if (!found) {
+        std::cerr << "error: unable to locate data file" << std::endl;
+        return RET_DATA_MISSING;
+    }
+
+    log.info("found '{}'", path.c_str());
+    try {
+        data.load(path);
+    } catch (project::data_error &e) {
+        std::cout << "error: " << e.what() << std::endl;
+        return RET_DATA_ERROR;
+    }
+
+    log.info("loaded project '{}'", data["name"].asString());
+    return RET_OK;
+}
+
+std::ofstream application::open(const char *path)
+{
+    std::ofstream ofs(path, std::ios::out | std::ios::binary);
+
+    if (!ofs) {
+        auto ec = std::make_error_code(std::errc::permission_denied);
+        throw std::filesystem::filesystem_error(
+            fmt::format("unable to open {} for writing", path), ec);
+    }
+
+    return ofs;
+}
+
+std::tuple<bool, std::filesystem::path> application::create_project_data(void)
+{
+    // Attempt to discover project data
+    auto [found, path] = project::discover_data();
+    if (found)
+        return std::make_tuple(found, path);
+
+    // Prompt the user for some information about the new project,
+    // since we couldn't find one above.
+    project::dialogue dia;
+    if (dia.ask())
+        return std::make_tuple(false, path);
+
+    // Use `dia` to create a fresh project data file.
+    auto cur = std::filesystem::absolute(".");
+    path = cur / ".clock0.json";
+
+    Json::Value root;
+    root["id"] = dia.project().id();
+    root["name"] = dia.project().name();
+
+    {
+        std::ofstream ofs;
+        try {
+            ofs = open(path.c_str());
+        } catch (std::filesystem::filesystem_error &ec) {
+            return std::make_tuple(false, path);
+        }
+
+        // Write out json to `path`
+        ofs << root;
+    }
+
+    return std::make_tuple(true, path);
 }

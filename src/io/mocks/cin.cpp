@@ -1,6 +1,7 @@
 /*
- * Main entrypoint for the clock0 program, a task management command-line
- * utility.
+ * Implementation of a fake version of 'io::cin' used for testing
+ * purposes. This "mock" of a cin allows a tester to control the
+ * internal data of the stream.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,24 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "app.hpp"
-#include "config.hpp"
-#include "enums.hpp"
-#include "logging.hpp"
-#include "options.hpp"
-#include "project/create.hpp"
-#include "project/data.hpp"
-#include "project/project.hpp"
-#include "string.hpp"
-#include "tui/tui.hpp"
-#include <boost/program_options/errors.hpp>
-#include <cctype>
-#include <iostream>
-#include <string>
-using namespace clock0;
+#include "cin.hpp"
+using namespace clock0::io;
 
-int main(int argc, char *argv[])
+std::istringstream &cin_mock::stream(void)
 {
-    application app(argc, argv);
-    return app.run();
+    return m_is;
+}
+
+std::istream &cin_mock::operator>>(char &ch)
+{
+    return (m_is >> ch);
+}
+
+std::istream &cin_mock::clear(void)
+{
+    m_is.clear();
+    m_is.ignore();
+    return m_is;
+}
+
+std::istream &cin_mock::getline(std::string &buffer)
+{
+    return std::getline(m_is, buffer);
 }
