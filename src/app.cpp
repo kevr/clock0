@@ -23,6 +23,7 @@
 #include "project/data.hpp"
 #include "system/return_codes.hpp"
 #include "tui/tui.hpp"
+#include "json/value.h"
 #include <cstdlib>
 #include <filesystem>
 #include <system_error>
@@ -131,7 +132,9 @@ int application::gather_project_data(void)
     try {
         data.load(path);
     } catch (project::data_error &e) {
-        std::cout << "error: " << e.what() << std::endl;
+        auto rel = std::filesystem::relative(path);
+        std::cout << fmt::format("data error ('{}'): ", rel.c_str())
+                  << e.what() << std::endl;
         return RET_DATA_ERROR;
     }
 
@@ -166,13 +169,10 @@ std::tuple<bool, std::filesystem::path> application::create_project_data(void)
         return std::make_tuple(false, path);
 
     // Use `dia` to create a fresh project data file.
-    auto cur = std::filesystem::absolute(".");
-    path = cur / ".clock0.json";
+    auto current_path = std::filesystem::absolute(".");
+    path = current_path / ".clock0.json";
 
-    Json::Value root;
-    root["id"] = dia.project().id();
-    root["name"] = dia.project().name();
-
+    auto root = project::create_data(dia.project().name(), dia.project().id());
     {
         std::ofstream ofs;
         try {

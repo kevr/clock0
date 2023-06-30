@@ -45,6 +45,9 @@ public:
 //! Discover a data file starting from the current directory up to root.
 std::tuple<bool, std::filesystem::path> discover_data(void);
 
+//! Create new project data with no lists
+Json::Value create_data(const std::string &, unsigned int id = 0);
+
 //! An exception object representing an error in data formatting.
 struct data_error : public std::runtime_error {
     using std::runtime_error::runtime_error;

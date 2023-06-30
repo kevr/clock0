@@ -51,9 +51,11 @@ void data::load(const std::filesystem::path &p)
         keys.emplace(k);
     }
 
-    // Enforce some required keys
+    // Enforce some details about the data read
     ensure(keys.find("id") != keys.end(), "missing key 'id'");
     ensure(keys.find("name") != keys.end(), "missing key 'name'");
+    ensure(keys.find("lists") != keys.end(), "missing key 'lists'");
+    ensure(this->operator[]("lists").isArray(), "'lists' must be an Array");
 }
 
 std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
@@ -72,3 +74,13 @@ std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
 
     return std::make_tuple(found, path / DATA_FILE);
 }
+
+Json::Value clock0::project::create_data(const std::string &name,
+                                         unsigned int id)
+{
+    Json::Value root;
+    root["id"] = id;
+    root["name"] = name;
+    root["lists"] = Json::Value(Json::arrayValue);
+    return root;
+} // LCOV_EXCL_LINE

@@ -258,12 +258,8 @@ TEST_F(cin_main_test, discover_data_succeeds)
     auto data = tmpdir / ".clock0.json";
 
     {
-        Json::Value root;
-        root["name"] = "test";
-        root["id"] = 0;
-
         std::ofstream ofs(data, std::ios::out);
-        ofs << root;
+        ofs << project::create_data("test");
     }
 
     mock_tui();

@@ -53,6 +53,61 @@ TEST_F(data_test, data_error)
     EXPECT_THROW((project::data(data_path)), project::data_error);
 }
 
+TEST_F(data_test, name_missing)
+{
+    {
+        Json::Value root;
+        root["id"] = 0;
+
+        std::ofstream ofs(data_path, std::ios::out);
+        ofs << root;
+    }
+
+    EXPECT_THROW((project::data(data_path)), project::data_error);
+}
+
+TEST_F(data_test, id_missing)
+{
+    {
+        Json::Value root;
+        root["name"] = "test";
+
+        std::ofstream ofs(data_path, std::ios::out);
+        ofs << root;
+    }
+
+    EXPECT_THROW((project::data(data_path)), project::data_error);
+}
+
+TEST_F(data_test, lists_missing)
+{
+    {
+        Json::Value root;
+        root["id"] = 0;
+        root["name"] = "test";
+
+        std::ofstream ofs(data_path, std::ios::out);
+        ofs << root;
+    }
+
+    EXPECT_THROW((project::data(data_path)), project::data_error);
+}
+
+TEST_F(data_test, lists_is_not_array)
+{
+    {
+        Json::Value root;
+        root["id"] = 0;
+        root["name"] = "test";
+        root["lists"] = 0;
+
+        std::ofstream ofs(data_path, std::ios::out);
+        ofs << root;
+    }
+
+    EXPECT_THROW((project::data(data_path)), project::data_error);
+}
+
 TEST_F(data_test, data_missing)
 {
     EXPECT_THROW((project::data(data_path)), project::data_missing_error);
