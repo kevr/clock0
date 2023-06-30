@@ -31,7 +31,7 @@ using namespace clock0;
 application::application(int argc, char **argv)
     : argc(argc)
     , argv(argv)
-    , log("application")
+    , log("app")
 {
     add_program_options();
 }
