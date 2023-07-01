@@ -28,6 +28,7 @@ sources = [
   'tui/root_window.cpp',
   'tui/basic_window.cpp',
   'project/project.cpp',
+  'project/validate.cpp',
   'project/data.cpp',
   'project/create.cpp',
   'logging.cpp',
@@ -115,6 +116,12 @@ if get_option('tests')
     dependencies : test_deps,
     cpp_args : test_args)
   test('project.data.test', project_data_test)
+
+  project_validate_test = executable('project.validate.test',
+    'project/validate.test.cpp',
+    dependencies : test_deps,
+    cpp_args : test_args)
+  test('project.validate.test', project_validate_test)
 endif
 
 if get_option('exec')

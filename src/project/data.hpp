@@ -57,6 +57,8 @@ struct data_missing_error : public data_error {
     using data_error::data_error;
 };
 
+void ensure(bool, const char *);
+
 }; // namespace clock0::project
 
 #endif /* SRC_PROJECT_DATA_HPP */

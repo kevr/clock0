@@ -18,18 +18,11 @@
  */
 #include "data.hpp"
 #include "../options.hpp"
+#include "validate.hpp"
 #include <filesystem>
 #include <fstream>
 #include <set>
 using namespace clock0::project;
-
-//! Ensure a predicate is true by throwing a runtime_error when false
-static void ensure(bool predicate, const char *error)
-{
-    if (!predicate) {
-        throw data_error(error);
-    }
-}
 
 data::data(const std::filesystem::path &p)
 {
@@ -46,17 +39,12 @@ void data::load(const std::filesystem::path &p)
         ifs >> *this;
     }
 
-    // Iterate over base keys once and collect them into a set for checks
-    std::set<std::string> keys;
-    for (const auto &k : getMemberNames()) {
-        keys.emplace(k);
-    }
+    // Validate project fields
+    validate_project(*this);
 
-    // Enforce some details about the data read
-    ensure(keys.find("id") != keys.end(), "missing key 'id'");
-    ensure(keys.find("name") != keys.end(), "missing key 'name'");
-    ensure(keys.find("lists") != keys.end(), "missing key 'lists'");
-    ensure(this->operator[]("lists").isArray(), "'lists' must be an Array");
+    // Validate lists format, which recursively validates lists keys
+    Json::Value lists(this->operator[]("lists"));
+    validate_lists(lists);
 }
 
 std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
