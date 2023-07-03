@@ -17,6 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "project.hpp"
+#include "lists.hpp"
+#include "validate.hpp"
+#include <set>
 using namespace clock0::project::data;
 
 project::project(const std::string &name, unsigned int id)
@@ -25,4 +28,20 @@ project::project(const std::string &name, unsigned int id)
     this->operator[]("name") = name;
     this->operator[]("id") = id;
     this->operator[]("lists") = Json::Value(Json::arrayValue);
+}
+
+void project::validate(const Json::Value &json)
+{
+    // Iterate over base keys once and collect them into a set for checks
+    std::set<std::string> keys;
+    for (const auto &k : json.getMemberNames()) {
+        keys.emplace(k);
+    }
+
+    // Enforce some details about the data read
+    ensure(keys.find("id") != keys.end(), "missing key 'id'");
+    ensure(keys.find("name") != keys.end(), "missing key 'name'");
+    ensure(keys.find("lists") != keys.end(), "missing key 'lists'");
+
+    lists::validate(json["lists"]);
 }

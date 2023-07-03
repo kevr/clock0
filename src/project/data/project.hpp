@@ -27,7 +27,21 @@ namespace clock0::project::data
 class project : public Json::Value
 {
 public:
+    /**
+     * A project.
+     *
+     * @param name Project name
+     * @param id Project id (defaulted to 0)
+     */
     project(const std::string &, unsigned int = 0);
+
+    /**
+     * Validate a project's JSON data
+     *
+     * @param json JSON list data
+     * @throws data_error
+     */
+    static void validate(const Json::Value &);
 };
 
 }; // namespace clock0::project::data
