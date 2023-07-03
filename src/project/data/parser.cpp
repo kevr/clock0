@@ -18,6 +18,8 @@
  */
 #include "parser.hpp"
 #include "error.hpp"
+#include "lists.hpp"
+#include "project.hpp"
 #include "validate.hpp"
 #include <fstream>
 using namespace clock0::project::data;
@@ -37,10 +39,6 @@ void parser::load(const std::filesystem::path &p)
         ifs >> *this;
     }
 
-    // Validate project fields
-    validate_project(*this);
-
-    // Validate lists format, which recursively validates lists keys
-    Json::Value lists(this->operator[]("lists"));
-    validate_lists(lists);
+    // Validate project JSON data
+    project::validate(*this);
 }

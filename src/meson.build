@@ -33,6 +33,8 @@ sources = [
   'project/data/parser.cpp',
   'project/data/validate.cpp',
   'project/data/project.cpp',
+  'project/data/lists.cpp',
+  'project/data/list.cpp',
   'logging.cpp',
   'string.cpp',
   'filesystem.cpp',

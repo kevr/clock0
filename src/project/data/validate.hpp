@@ -26,9 +26,6 @@ namespace clock0::project::data
 {
 
 void ensure(bool, const char *);
-void validate_project(const Json::Value &);
-void validate_lists(const Json::Value &);
-void validate_list(const Json::Value &);
 
 }; // namespace clock0::project::data
 

@@ -19,6 +19,7 @@
  */
 #include "validate.hpp"
 #include "error.hpp"
+#include "list.hpp"
 #include <set>
 using namespace clock0::project;
 
@@ -27,42 +28,4 @@ void data::ensure(bool predicate, const char *error)
     if (!predicate) {
         throw data_error(error);
     }
-}
-
-void data::validate_project(const Json::Value &proj)
-{
-    // Iterate over base keys once and collect them into a set for checks
-    std::set<std::string> keys;
-    for (const auto &k : proj.getMemberNames()) {
-        keys.emplace(k);
-    }
-
-    // Enforce some details about the data read
-    ensure(keys.find("id") != keys.end(), "missing key 'id'");
-    ensure(keys.find("name") != keys.end(), "missing key 'name'");
-    ensure(keys.find("lists") != keys.end(), "missing key 'lists'");
-}
-
-void data::validate_lists(const Json::Value &lists)
-{
-    ensure(lists.isArray(), "lists must be an Array");
-
-    for (const auto &list : lists) {
-        validate_list(list);
-    }
-}
-
-void data::validate_list(const Json::Value &list)
-{
-    ensure(list.isObject(), "list element must be an Object");
-
-    std::set<std::string> keys;
-    for (const auto &key : list.getMemberNames()) {
-        keys.emplace(key);
-    }
-
-    ensure(keys.find("title") != keys.end(),
-           "list object must contain a 'title' string");
-    ensure(keys.find("tasks") != keys.end() && list["tasks"].isArray(),
-           "list object must contain a 'tasks' Array");
 }
