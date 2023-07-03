@@ -1,6 +1,5 @@
 /*
- * Structures and utilities which aid with the 'lists' field of
- * project data.
+ * Declarations of a project data parser class.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -17,19 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_PROJECT_VALIDATE_HPP
-#define SRC_PROJECT_VALIDATE_HPP
+#ifndef SRC_PROJECT_DATA_PARSER_HPP
+#define SRC_PROJECT_DATA_PARSER_HPP
 
 #include "json/json.h"
+#include <filesystem>
 
-namespace clock0::project
+namespace clock0::project::data
 {
 
-void ensure(bool, const char *);
-void validate_project(const Json::Value &);
-void validate_lists(const Json::Value &);
-void validate_list(const Json::Value &);
+const std::string DEFAULT_DATA_FILE = ".clock0.json";
 
-}; // namespace clock0::project
+class parser : public Json::Value
+{
+public:
+    //! Default constructor
+    parser(void) = default;
 
-#endif /* SRC_PROJECT_LISTS_HPP */
+    //! Load a data file by construction
+    parser(const std::filesystem::path &);
+
+    //! Load a data file
+    void load(const std::filesystem::path &);
+};
+
+}; // namespace clock0::project::data
+
+#endif /* SRC_PROJECT_DATA_PARSER_HPP */

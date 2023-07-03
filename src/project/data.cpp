@@ -18,34 +18,10 @@
  */
 #include "data.hpp"
 #include "../options.hpp"
-#include "validate.hpp"
 #include <filesystem>
 #include <fstream>
 #include <set>
 using namespace clock0::project;
-
-data::data(const std::filesystem::path &p)
-{
-    load(p);
-}
-
-void data::load(const std::filesystem::path &p)
-{
-    { // Scope out access to the file via ifstream
-        std::ifstream ifs(p.c_str(), std::ios::binary);
-        if (!ifs) {
-            throw data_missing_error("unable to load data file");
-        }
-        ifs >> *this;
-    }
-
-    // Validate project fields
-    validate_project(*this);
-
-    // Validate lists format, which recursively validates lists keys
-    Json::Value lists(this->operator[]("lists"));
-    validate_lists(lists);
-}
 
 std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
 {

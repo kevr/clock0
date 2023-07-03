@@ -18,18 +18,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "validate.hpp"
-#include "data.hpp"
+#include "error.hpp"
 #include <set>
-using namespace clock0;
+using namespace clock0::project;
 
-void project::ensure(bool predicate, const char *error)
+void data::ensure(bool predicate, const char *error)
 {
     if (!predicate) {
         throw data_error(error);
     }
 }
 
-void project::validate_project(const Json::Value &proj)
+void data::validate_project(const Json::Value &proj)
 {
     // Iterate over base keys once and collect them into a set for checks
     std::set<std::string> keys;
@@ -43,7 +43,7 @@ void project::validate_project(const Json::Value &proj)
     ensure(keys.find("lists") != keys.end(), "missing key 'lists'");
 }
 
-void project::validate_lists(const Json::Value &lists)
+void data::validate_lists(const Json::Value &lists)
 {
     ensure(lists.isArray(), "lists must be an Array");
 
@@ -52,7 +52,7 @@ void project::validate_lists(const Json::Value &lists)
     }
 }
 
-void project::validate_list(const Json::Value &list)
+void data::validate_list(const Json::Value &list)
 {
     ensure(list.isObject(), "list element must be an Object");
 

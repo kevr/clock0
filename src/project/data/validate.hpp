@@ -1,5 +1,6 @@
 /*
- * Structures and utilities which aid with project data collection.
+ * Structures and utilities which aid with the 'lists' field of
+ * project data.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,26 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_PROJECT_DATA_HPP
-#define SRC_PROJECT_DATA_HPP
+#ifndef SRC_PROJECT_VALIDATE_HPP
+#define SRC_PROJECT_VALIDATE_HPP
 
-#include "data/error.hpp"
-#include "data/parser.hpp"
-#include <filesystem>
-#include <string>
-#include <tuple>
+#include "json/json.h"
 
-namespace clock0::project
+namespace clock0::project::data
 {
 
-//! Discover a data file starting from the current directory up to root.
-std::tuple<bool, std::filesystem::path> discover_data(void);
-
-//! Create new project data with no lists
-Json::Value create_data(const std::string &, unsigned int id = 0);
-
 void ensure(bool, const char *);
+void validate_project(const Json::Value &);
+void validate_lists(const Json::Value &);
+void validate_list(const Json::Value &);
 
-}; // namespace clock0::project
+}; // namespace clock0::project::data
 
-#endif /* SRC_PROJECT_DATA_HPP */
+#endif /* SRC_PROJECT_LISTS_HPP */

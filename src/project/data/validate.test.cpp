@@ -17,9 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "validate.hpp"
-#include "data.hpp"
+#include "error.hpp"
 #include "gtest/gtest.h"
-using namespace clock0;
+using namespace clock0::project::data;
 
 TEST(validate, missing_list_title)
 {
@@ -27,7 +27,7 @@ TEST(validate, missing_list_title)
     Json::Value lists(Json::arrayValue);
     lists.append(list);
 
-    EXPECT_THROW(project::validate_lists(lists), project::data_error);
+    EXPECT_THROW(validate_lists(lists), data_error);
 }
 
 TEST(validate, invalid_title)
@@ -38,7 +38,7 @@ TEST(validate, invalid_title)
     Json::Value lists(Json::arrayValue);
     lists.append(list);
 
-    EXPECT_THROW(project::validate_lists(lists), project::data_error);
+    EXPECT_THROW(validate_lists(lists), data_error);
 }
 
 TEST(validate, missing_list_tasks)
@@ -49,7 +49,7 @@ TEST(validate, missing_list_tasks)
     Json::Value lists(Json::arrayValue);
     lists.append(list);
 
-    EXPECT_THROW(project::validate_lists(lists), project::data_error);
+    EXPECT_THROW(validate_lists(lists), data_error);
 }
 
 TEST(validate, invalid_list_tasks)
@@ -61,5 +61,5 @@ TEST(validate, invalid_list_tasks)
     Json::Value lists(Json::arrayValue);
     lists.append(list);
 
-    EXPECT_THROW(project::validate_lists(lists), project::data_error);
+    EXPECT_THROW(validate_lists(lists), data_error);
 }

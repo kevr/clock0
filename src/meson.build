@@ -28,8 +28,9 @@ sources = [
   'tui/root_window.cpp',
   'tui/basic_window.cpp',
   'project/project.cpp',
-  'project/validate.cpp',
   'project/data.cpp',
+  'project/data/parser.cpp',
+  'project/data/validate.cpp',
   'project/create.cpp',
   'logging.cpp',
   'string.cpp',
@@ -111,17 +112,17 @@ if get_option('tests')
     cpp_args : test_args)
   test('project.project.test', project_project_test)
 
-  project_data_test = executable('project.data.test',
-    'project/data.test.cpp',
+  project_data_parser_test = executable('project.data.parser.test',
+    'project/data/parser.test.cpp',
     dependencies : test_deps,
     cpp_args : test_args)
-  test('project.data.test', project_data_test)
+  test('project.data.parser.test', project_data_parser_test)
 
-  project_validate_test = executable('project.validate.test',
-    'project/validate.test.cpp',
+  project_data_validate_test = executable('project.data.validate.test',
+    'project/data/validate.test.cpp',
     dependencies : test_deps,
     cpp_args : test_args)
-  test('project.validate.test', project_validate_test)
+  test('project.data.validate.test', project_data_validate_test)
 endif
 
 if get_option('exec')

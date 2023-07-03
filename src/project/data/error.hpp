@@ -1,5 +1,5 @@
 /*
- * Structures and utilities which aid with project data collection.
+ * Project data error structures.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,26 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_PROJECT_DATA_HPP
-#define SRC_PROJECT_DATA_HPP
+#ifndef SRC_PROJECT_DATA_ERROR_HPP
+#define SRC_PROJECT_DATA_ERROR_HPP
 
-#include "data/error.hpp"
-#include "data/parser.hpp"
-#include <filesystem>
-#include <string>
-#include <tuple>
+#include <stdexcept>
 
-namespace clock0::project
+namespace clock0::project::data
 {
 
-//! Discover a data file starting from the current directory up to root.
-std::tuple<bool, std::filesystem::path> discover_data(void);
+struct data_error : public std::domain_error {
+    using std::domain_error::domain_error;
+};
 
-//! Create new project data with no lists
-Json::Value create_data(const std::string &, unsigned int id = 0);
+struct data_missing_error : public data_error {
+    using data_error::data_error;
+};
 
-void ensure(bool, const char *);
+}; // namespace clock0::project::data
 
-}; // namespace clock0::project
-
-#endif /* SRC_PROJECT_DATA_HPP */
+#endif /* SRC_PROJECT_DATA_ERROR_HPP */

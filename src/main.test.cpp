@@ -301,7 +301,7 @@ TEST_F(cin_main_test, unable_to_create_data_file)
 
 TEST_F(main_test, data_error)
 {
-    auto data_path = tmpdir / project::DATA_FILE;
+    auto data_path = tmpdir / project::data::DEFAULT_DATA_FILE;
 
     {
         Json::Value root;

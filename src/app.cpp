@@ -120,7 +120,7 @@ int application::handle_program_args(void)
 
 int application::gather_project_data(void)
 {
-    project::data data;
+    project::data::parser data;
 
     auto [found, path] = create_project_data();
     if (!found) {
@@ -131,7 +131,7 @@ int application::gather_project_data(void)
     log.info("found '{}'", path.c_str());
     try {
         data.load(path);
-    } catch (project::data_error &e) {
+    } catch (project::data::data_error &e) {
         auto rel = std::filesystem::relative(path);
         std::cout << fmt::format("data error ('{}'): ", rel.c_str())
                   << e.what() << std::endl;

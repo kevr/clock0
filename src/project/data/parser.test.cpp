@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "data.hpp"
-#include "../filesystem.hpp"
+#include "parser.hpp"
+#include "../../filesystem.hpp"
+#include "error.hpp"
 #include "gtest/gtest.h"
 #include <fstream>
 using namespace clock0;
+using namespace project::data;
 
 class data_test : public testing::Test
 {
@@ -32,7 +34,7 @@ public:
     void SetUp(void) override
     {
         tmpdir = filesystem::make_tmpdir();
-        data_path = tmpdir / project::DATA_FILE;
+        data_path = tmpdir / DEFAULT_DATA_FILE;
     }
 
     void TearDown(void) override
@@ -50,7 +52,7 @@ TEST_F(data_test, data_error)
         ofs << root;
     }
 
-    EXPECT_THROW((project::data(data_path)), project::data_error);
+    EXPECT_THROW((parser(data_path)), data_error);
 }
 
 TEST_F(data_test, name_missing)
@@ -63,7 +65,7 @@ TEST_F(data_test, name_missing)
         ofs << root;
     }
 
-    EXPECT_THROW((project::data(data_path)), project::data_error);
+    EXPECT_THROW((parser(data_path)), data_error);
 }
 
 TEST_F(data_test, id_missing)
@@ -76,7 +78,7 @@ TEST_F(data_test, id_missing)
         ofs << root;
     }
 
-    EXPECT_THROW((project::data(data_path)), project::data_error);
+    EXPECT_THROW((parser(data_path)), data_error);
 }
 
 TEST_F(data_test, lists_missing)
@@ -90,7 +92,7 @@ TEST_F(data_test, lists_missing)
         ofs << root;
     }
 
-    EXPECT_THROW((project::data(data_path)), project::data_error);
+    EXPECT_THROW((parser(data_path)), data_error);
 }
 
 TEST_F(data_test, lists_is_not_array)
@@ -105,10 +107,10 @@ TEST_F(data_test, lists_is_not_array)
         ofs << root;
     }
 
-    EXPECT_THROW((project::data(data_path)), project::data_error);
+    EXPECT_THROW((parser(data_path)), data_error);
 }
 
 TEST_F(data_test, data_missing)
 {
-    EXPECT_THROW((project::data(data_path)), project::data_missing_error);
+    EXPECT_THROW((parser(data_path)), data_missing_error);
 }
