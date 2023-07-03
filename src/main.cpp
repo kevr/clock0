@@ -18,19 +18,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "app.hpp"
-#include "config.hpp"
-#include "enums.hpp"
-#include "logging.hpp"
-#include "options.hpp"
-#include "project/create.hpp"
-#include "project/data.hpp"
-#include "project/project.hpp"
-#include "string.hpp"
-#include "tui/tui.hpp"
-#include <boost/program_options/errors.hpp>
-#include <cctype>
-#include <iostream>
-#include <string>
 using namespace clock0;
 
 int main(int argc, char *argv[])

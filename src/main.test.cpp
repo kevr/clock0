@@ -24,6 +24,7 @@
 #include "filesystem.hpp"
 #include "io/mocks/cin.hpp"
 #include "mocks/ncurses.hpp"
+#include "project/data.hpp"
 #include "string.hpp"
 #include "system/return_codes.hpp"
 #include "gtest/gtest.h"

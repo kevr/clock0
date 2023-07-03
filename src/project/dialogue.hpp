@@ -1,5 +1,5 @@
 /*
- * Create a project.
+ * A command-line dialogue which gathers info to create a project.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef SRC_PROJECT_CREATE_HPP
-#define SRC_PROJECT_CREATE_HPP
+#ifndef SRC_PROJECT_DIALOGUE_HPP
+#define SRC_PROJECT_DIALOGUE_HPP
 
 #include "../io/cin.hpp"
 #include "project.hpp"
@@ -64,4 +64,4 @@ public:
 
 }; // namespace clock0::project
 
-#endif /* SRC_PROJECT_CREATE_HPP */
+#endif /* SRC_PROJECT_DIALOGUE_HPP */
