@@ -1,5 +1,5 @@
 /*
- * Structures and utilities which aid with project data collection.
+ * Utilities related to project data.
  *
  * Copyright (C) 2023 Kevin Morris <kevr@0cost.org>
  *
@@ -16,27 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "data.hpp"
-#include "../options.hpp"
-#include <filesystem>
-#include <fstream>
-#include <set>
-using namespace clock0::project;
+#include "project.hpp"
+using namespace clock0::project::data;
 
-std::tuple<bool, std::filesystem::path> clock0::project::discover_data(void)
+project::project(const std::string &name, unsigned int id)
+    : Json::Value(Json::objectValue)
 {
-    auto path = std::filesystem::absolute(".");
-    bool found = false;
-
-    const auto base = options::ref().get<std::string>("file");
-    do {
-        auto data_file = path / base;
-        if (std::filesystem::exists(data_file)) {
-            found = true;
-            break;
-        }
-        path = path.parent_path();
-    } while (path != "/");
-
-    return std::make_tuple(found, path / base);
+    this->operator[]("name") = name;
+    this->operator[]("id") = id;
+    this->operator[]("lists") = Json::Value(Json::arrayValue);
 }

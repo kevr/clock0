@@ -281,7 +281,7 @@ TEST_F(cin_main_test, discover_data_succeeds)
 
     {
         std::ofstream ofs(data, std::ios::out);
-        ofs << project::create_data("test");
+        ofs << project::data::project("test");
     }
 
     mock_tui();

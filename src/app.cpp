@@ -172,7 +172,8 @@ std::tuple<bool, std::filesystem::path> application::create_project_data(void)
     std::filesystem::path new_path(options::ref().get<std::string>("file"));
     new_path = std::filesystem::absolute(new_path);
 
-    auto root = project::create_data(dia.project().name(), dia.project().id());
+    auto root =
+        project::data::project(dia.project().name(), dia.project().id());
     {
         std::ofstream ofs;
         try {

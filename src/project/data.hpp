@@ -21,6 +21,7 @@
 
 #include "data/error.hpp"
 #include "data/parser.hpp"
+#include "data/project.hpp"
 #include <filesystem>
 #include <string>
 #include <tuple>
@@ -30,11 +31,6 @@ namespace clock0::project
 
 //! Discover a data file starting from the current directory up to root.
 std::tuple<bool, std::filesystem::path> discover_data(void);
-
-//! Create new project data with no lists
-Json::Value create_data(const std::string &, unsigned int id = 0);
-
-void ensure(bool, const char *);
 
 }; // namespace clock0::project
 
