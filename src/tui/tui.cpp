@@ -38,14 +38,16 @@ int tui::create(void)
     if (auto rc = root->refresh())
         return rc;
 
-    // Spawn a container in the root window
+    // Spawn a container in the root window of size `root.(x|y) - 1`.
     container = std::make_shared<window>(*root, "container");
     auto [x, y] = root->size();
-    if (auto rc = container->create(x, y, 0, 0))
+    if (auto rc = container->create(x - 1, y - 1, 1, 1))
         return rc;
 
     container->on_draw([](window &w) -> int {
-        return ncurses::ref().wborder(w.handle(), 0, 0, 0, 0, 0, 0, 0, 0);
+        // Draw a border on stdscr, outside of the container
+        return ncurses::ref().wborder(
+            w.parent().handle(), 0, 0, 0, 0, 0, 0, 0, 0);
     });
 
     // Draw from the root
